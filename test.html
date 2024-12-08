@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Xterm.js Scrollable Terminal</title>
+        <link rel="stylesheet" href="https://unpkg.com/xterm/css/xterm.css" />
+        <script src="https://unpkg.com/xterm/lib/xterm.js"></script>
+        <style>
+            body {
+                margin: 0;
+                height: 100vh; /* Full height of the viewport */
+                overflow: auto; /* Allow scrolling */
+            }
+            #terminal {
+                width: 100%;
+                height: 100%; /* Full height of the body */
+                background-color: black; /* Optional background color */
+            }
+            [style*='position: absolute'][style*='top: -50000px'] {
+                display: none !important;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="terminal"></div>
+        <script>
+            const term = new Terminal({
+                scrollback: 1000, // Set the scrollback buffer size
+                cursorBlink: true, // Optional: make the cursor blink
+            });
+            term.open(document.getElementById('terminal'));
+            term.write('Welcome to Xterm.js Demo\n');
+
+            // Handle user input and echo it back
+            term.onData((data) => {
+                term.write(data); // Echo back the input
+            });
+        </script>
+    </body>
+</html>

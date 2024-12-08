@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Document</title>
+        <style>
+            body {
+                height: 100vh;
+                background-color: #eef1ff;
+            }
+            * {
+                box-sizing: border-box;
+            }
+            /* [style*='position: absolute'][style*='top: -50000px'] {
+                transform: scale(0) !important;
+            } */
+        </style>
+    </head>
+    <body>
+        <div id="ww"></div>
+        <button onclick="show()">Show Terminal</button>
+        <button onclick="hide()">hide Terminal</button>
+        <script src="dist/jerminal.min.js"></script>
+        <script>
+            let bterm;
+            const commands = [
+                {
+                    command: 'hello',
+                    description: 'Thi is a hello command',
+                    action: (terminal, args) => {
+                        return new Promise((resolve, reject) => {
+                            terminal.write('\r\nThinking.');
+
+                            setTimeout(() => {
+                                terminal.write('\r\nHello ' + args.join(' '));
+                                resolve();
+                            }, 4000);
+                        });
+                    },
+                },
+                {
+                    command: 'theme',
+                    description: 'Change the terminal theme',
+                    subCommands: [
+                        {
+                            command: 'set',
+                            description: 'Change the terminal theme to light',
+                            action: async (terminal, args) => {
+                                let theme = args[0];
+                                if (theme === 'light') {
+                                    document.body.style.backgroundColor = '#fff';
+                                    bterm.setTheme('light');
+                                } else {
+                                    document.body.style.backgroundColor = '#000';
+                                    bterm.setTheme('dark');
+                                }
+                                terminal.write('\r\nsetting theme to ' + args[0]);
+                            },
+                        },
+                        {
+                            command: 'list',
+                            description: 'List all available themes',
+                            action: async (terminal, args) => {
+                                console.log('list');
+                                let list = ['light', 'dark', 'blue', 'green', 'purple', 'red', 'yellow'];
+                                list.forEach((theme) => {
+                                    terminal.write('\r\n' + theme);
+                                });
+                            },
+                        },
+                    ],
+                },
+            ];
+
+            //on dom loaded
+
+            bterm = jerminal.LetsGo({
+                hotKey: 'c',
+                // commands: commands,
+                welcomeMessage: 'bterm v1.0.0',
+                // theme: 'dark',
+                // playSound: true,
+            });
+            function show() {
+                bterm.show();
+            }
+            function hide() {
+                bterm.hide();
+            }
+        </script>
+    </body>
+</html>

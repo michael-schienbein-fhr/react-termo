@@ -1,0 +1,40 @@
+{
+    "name": "@rajnandan1/jerminal",
+    "version": "1.0.0",
+    "description": "Ruto is a lightweight(4KB), fast and easy-to-use JS library that streamlines the communication between parent and child window(iframe/popup).",
+    "type": "module",
+    "main": "dist/ruto.min.js",
+    "module": "dist/ruto.esm.js",
+    "exports": {
+        ".": {
+            "import": "./dist/jerminal.esm.js",
+            "require": "./dist/jerminal.min.js"
+        }
+    },
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "build": "rollup --bundleConfigAsCjs -c rollup.config.js",
+        "watch": "rollup --bundleConfigAsCjs -c rollup.config.js --watch",
+        "prettify": "prettier --write ."
+    },
+    "keywords": [
+        "jerminal"
+    ],
+    "author": "Raj Nandan Sharma <rajnandan1@gmail.com> (https://www.rajnandan.com)",
+    "license": "MIT",
+    "devDependencies": {
+        "@rollup/plugin-commonjs": "^28.0.1",
+        "@rollup/plugin-node-resolve": "^15.3.0",
+        "@rollup/plugin-terser": "^0.4.4",
+        "@types/xterm": "^2.0.3",
+        "@xterm/addon-fit": "^0.10.0",
+        "@xterm/addon-web-links": "^0.11.0",
+        "@xterm/xterm": "^5.5.0",
+        "prettier": "^3.2.5",
+        "rollup": "^4.18.0",
+        "rollup-plugin-postcss": "^4.0.2",
+        "rollup-plugin-typescript2": "^0.36.0",
+        "tslib": "^2.6.2",
+        "typescript": "^5.4.5"
+    }
+}
