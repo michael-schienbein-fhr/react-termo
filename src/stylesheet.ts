@@ -4,7 +4,7 @@ const Stylesheet = `
 		box-sizing: border-box;
 	}
 	
-	.jerminal-container{
+	.termo-container{
 		position: fixed;
 		bottom: 12px;
 		right: 12px;
@@ -23,7 +23,7 @@ const Stylesheet = `
 		backdrop-filter: blur(5px);
 		-webkit-backdrop-filter: blur(5px);
 	}
-	.jerminal-header{
+	.termo-header{
 		display: flex;
 		justify-content: space-between;
 		line-height: 1;
@@ -36,17 +36,17 @@ const Stylesheet = `
 		user-select: none;
 		color: #011627;
 
-		.jerminal-close-button{
+		.termo-close-button{
 			cursor: pointer;
 		}
-		.jerminal-resize-button{
+		.termo-resize-button{
 			cursor: pointer;
 		}
 	}
-	.dark .jerminal-header{
+	.dark .termo-header{
 		color: #fefefe;
 	}
-	.jerminal-container .jerminal-terminal{
+	.termo-container .termo-terminal{
 		background-color: transparent;
 		border: 1px solid transparent;
 		border-radius: 4px;

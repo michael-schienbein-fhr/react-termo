@@ -14,7 +14,7 @@ const DOM = {
         parent.appendChild(child);
     },
     injectStylesheet(styleSheet: string): void {
-        const id = 'jerminal-styles';
+        const id = 'termo-styles';
         //check if stylesheet is already injected
         if (document.querySelector('#' + id)) {
             return;

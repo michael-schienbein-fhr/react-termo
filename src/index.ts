@@ -13,12 +13,12 @@ export function LetsGo(options: InitOptions) {
     DOM.injectStylesheet(styleSheet);
 
     // Create the container
-    let containerID = Utils.generateId('jerminal-container');
-    let container = DOM.createDiv(containerID, 'jerminal-container');
+    let containerID = Utils.generateId('termo-container');
+    let container = DOM.createDiv(containerID, 'termo-container');
 
     // Create the header
-    let headerID = Utils.generateId('jerminal-header');
-    let header = DOM.createDiv(headerID, 'jerminal-header');
+    let headerID = Utils.generateId('termo-header');
+    let header = DOM.createDiv(headerID, 'termo-header');
     if (options.theme === 'dark') {
         container.classList.add('dark');
     }
@@ -26,7 +26,7 @@ export function LetsGo(options: InitOptions) {
     let mode = 'floating';
     let state = 'closed';
     // Create the resize button
-    let resizeButton = DOM.createDiv(Utils.generateId('jerminal-resize-button'), 'jerminal-resize-button');
+    let resizeButton = DOM.createDiv(Utils.generateId('termo-resize-button'), 'termo-resize-button');
     resizeButton.innerHTML = dock;
     DOM.appendChild(header, resizeButton);
     //add a click event to resize the terminal
@@ -54,12 +54,12 @@ export function LetsGo(options: InitOptions) {
     });
 
     // Create title div
-    let titleDiv = DOM.createDiv(Utils.generateId('jerminal-title'), 'jerminal-title');
-    titleDiv.innerHTML = 'Jerminal';
+    let titleDiv = DOM.createDiv(Utils.generateId('termo-title'), 'termo-title');
+    titleDiv.innerHTML = 'termo';
     DOM.appendChild(header, titleDiv);
 
     // Create the close button
-    let closeButton = DOM.createDiv(Utils.generateId('jerminal-close-button'), 'jerminal-close-button');
+    let closeButton = DOM.createDiv(Utils.generateId('termo-close-button'), 'termo-close-button');
     closeButton.innerHTML = close;
     DOM.appendChild(header, closeButton);
     //add a click event to close the terminal
@@ -71,8 +71,8 @@ export function LetsGo(options: InitOptions) {
     DOM.appendChild(container, header);
 
     // Create the terminal
-    let terminalID = Utils.generateId('jerminal-terminal');
-    let terminal = DOM.createDiv(terminalID, 'jerminal-terminal');
+    let terminalID = Utils.generateId('termo-terminal');
+    let terminal = DOM.createDiv(terminalID, 'termo-terminal');
     DOM.appendChild(container, terminal);
     container.style.transform = 'scale(0)';
     DOM.appendChild(document.body, container);

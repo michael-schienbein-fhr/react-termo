@@ -1,14 +1,14 @@
 {
-    "name": "@rajnandan1/jerminal",
+    "name": "@rajnandan1/termo",
     "version": "1.0.0",
-    "description": "Ruto is a lightweight(4KB), fast and easy-to-use JS library that streamlines the communication between parent and child window(iframe/popup).",
+    "description": "A terminal emulator for the web",
     "type": "module",
-    "main": "dist/ruto.min.js",
-    "module": "dist/ruto.esm.js",
+    "main": "dist/termo.min.js",
+    "module": "dist/termo.esm.js",
     "exports": {
         ".": {
-            "import": "./dist/jerminal.esm.js",
-            "require": "./dist/jerminal.min.js"
+            "import": "./dist/termo.esm.js",
+            "require": "./dist/termo.min.js"
         }
     },
     "scripts": {
@@ -18,7 +18,7 @@
         "prettify": "prettier --write ."
     },
     "keywords": [
-        "jerminal"
+        "termo"
     ],
     "author": "Raj Nandan Sharma <rajnandan1@gmail.com> (https://www.rajnandan.com)",
     "license": "MIT",

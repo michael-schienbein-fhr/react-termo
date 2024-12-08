@@ -55,7 +55,7 @@ const Utils = {
         const defaultOptions: InitOptions = {
             playSound: true,
             hotKey: 'Control+Space',
-            welcomeMessage: 'Welcome to Jerminal!',
+            welcomeMessage: 'Welcome to termo!',
             theme: 'light',
             commands: [
                 {

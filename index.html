@@ -21,7 +21,7 @@
         <div id="ww"></div>
         <button onclick="show()">Show Terminal</button>
         <button onclick="hide()">hide Terminal</button>
-        <script src="dist/jerminal.min.js"></script>
+        <script src="dist/termo.min.js"></script>
         <script>
             let bterm;
             const commands = [
@@ -75,7 +75,7 @@
 
             //on dom loaded
 
-            bterm = jerminal.LetsGo({
+            bterm = termo.LetsGo({
                 hotKey: 'c',
                 // commands: commands,
                 welcomeMessage: 'bterm v1.0.0',

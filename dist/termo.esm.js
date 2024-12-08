@@ -22,7 +22,7 @@ const DOM = {
         parent.appendChild(child);
     },
     injectStylesheet(styleSheet) {
-        const id = 'jerminal-styles';
+        const id = 'termo-styles';
         //check if stylesheet is already injected
         if (document.querySelector('#' + id)) {
             return;
@@ -120,7 +120,7 @@ const Utils = {
         const defaultOptions = {
             playSound: true,
             hotKey: 'Control+Space',
-            welcomeMessage: 'Welcome to Jerminal!',
+            welcomeMessage: 'Welcome to termo!',
             theme: 'light',
             commands: [
                 {
@@ -198,7 +198,7 @@ const Stylesheet = `
 		box-sizing: border-box;
 	}
 	
-	.jerminal-container{
+	.termo-container{
 		position: fixed;
 		bottom: 12px;
 		right: 12px;
@@ -217,7 +217,7 @@ const Stylesheet = `
 		backdrop-filter: blur(5px);
 		-webkit-backdrop-filter: blur(5px);
 	}
-	.jerminal-header{
+	.termo-header{
 		display: flex;
 		justify-content: space-between;
 		line-height: 1;
@@ -230,17 +230,17 @@ const Stylesheet = `
 		user-select: none;
 		color: #011627;
 
-		.jerminal-close-button{
+		.termo-close-button{
 			cursor: pointer;
 		}
-		.jerminal-resize-button{
+		.termo-resize-button{
 			cursor: pointer;
 		}
 	}
-	.dark .jerminal-header{
+	.dark .termo-header{
 		color: #fefefe;
 	}
-	.jerminal-container .jerminal-terminal{
+	.termo-container .termo-terminal{
 		background-color: transparent;
 		border: 1px solid transparent;
 		border-radius: 4px;
@@ -611,18 +611,18 @@ function LetsGo(options) {
     const styleSheet = Stylesheet$1();
     DOM.injectStylesheet(styleSheet);
     // Create the container
-    let containerID = Utils.generateId('jerminal-container');
-    let container = DOM.createDiv(containerID, 'jerminal-container');
+    let containerID = Utils.generateId('termo-container');
+    let container = DOM.createDiv(containerID, 'termo-container');
     // Create the header
-    let headerID = Utils.generateId('jerminal-header');
-    let header = DOM.createDiv(headerID, 'jerminal-header');
+    let headerID = Utils.generateId('termo-header');
+    let header = DOM.createDiv(headerID, 'termo-header');
     if (options.theme === 'dark') {
         container.classList.add('dark');
     }
     let mode = 'floating';
     let state = 'closed';
     // Create the resize button
-    let resizeButton = DOM.createDiv(Utils.generateId('jerminal-resize-button'), 'jerminal-resize-button');
+    let resizeButton = DOM.createDiv(Utils.generateId('termo-resize-button'), 'termo-resize-button');
     resizeButton.innerHTML = dock;
     DOM.appendChild(header, resizeButton);
     //add a click event to resize the terminal
@@ -648,11 +648,11 @@ function LetsGo(options) {
         terminalManager.focus();
     });
     // Create title div
-    let titleDiv = DOM.createDiv(Utils.generateId('jerminal-title'), 'jerminal-title');
-    titleDiv.innerHTML = 'Jerminal';
+    let titleDiv = DOM.createDiv(Utils.generateId('termo-title'), 'termo-title');
+    titleDiv.innerHTML = 'termo';
     DOM.appendChild(header, titleDiv);
     // Create the close button
-    let closeButton = DOM.createDiv(Utils.generateId('jerminal-close-button'), 'jerminal-close-button');
+    let closeButton = DOM.createDiv(Utils.generateId('termo-close-button'), 'termo-close-button');
     closeButton.innerHTML = close;
     DOM.appendChild(header, closeButton);
     //add a click event to close the terminal
@@ -662,8 +662,8 @@ function LetsGo(options) {
     // Append the header to the container
     DOM.appendChild(container, header);
     // Create the terminal
-    let terminalID = Utils.generateId('jerminal-terminal');
-    let terminal = DOM.createDiv(terminalID, 'jerminal-terminal');
+    let terminalID = Utils.generateId('termo-terminal');
+    let terminal = DOM.createDiv(terminalID, 'termo-terminal');
     DOM.appendChild(container, terminal);
     container.style.transform = 'scale(0)';
     DOM.appendChild(document.body, container);
@@ -711,4 +711,4 @@ function LetsGo(options) {
 }
 
 export { LetsGo };
-//# sourceMappingURL=jerminal.esm.js.map
+//# sourceMappingURL=termo.esm.js.map

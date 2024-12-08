@@ -8,19 +8,19 @@ export default {
     input: 'src/index.ts',
     output: [
         {
-            file: 'dist/jerminal.min.js',
-            name: 'jerminal',
+            file: 'dist/termo.min.js',
+            name: 'termo',
             format: 'umd',
             sourcemap: true,
             plugins: [terser()],
         },
         {
-            file: 'dist/jerminal.cjs.js',
+            file: 'dist/termo.cjs.js',
             format: 'cjs',
             sourcemap: true,
         },
         {
-            file: 'dist/jerminal.esm.js',
+            file: 'dist/termo.esm.js',
             format: 'es',
             sourcemap: true,
         },
