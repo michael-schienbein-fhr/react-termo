@@ -1,0 +1,49 @@
+* {
+    font-family: 'Sono', monospace;
+}
+
+.squares-pattern {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 0;
+    background-repeat: no-repeat;
+    background-size: 100%;
+    height: 100svh;
+    clip-path: polygon(0 0, 100% 0, 100% 54%, 0% 100%);
+    transform: blur(3px);
+}
+
+.squares-pattern::after {
+    content: '';
+    position: absolute;
+    background-image: linear-gradient(#444cf7 1px, transparent 1px), linear-gradient(to right, #444cf7 1px, #fbfbfb 1px);
+
+    mask-image: linear-gradient(
+        180deg,
+        rgba(0, 0, 0, 0.2) 0%,
+        rgba(0, 0, 0, 0.1) 20%,
+        rgba(0, 0, 0, 0.05) 40%,
+        rgba(0, 0, 0, 0.025) 60%,
+        rgba(0, 0, 0, 0.0125) 80%,
+        rgba(0, 0, 0, 0) 100%
+    );
+    background-size: 32px 32px;
+    width: 100%;
+    height: 100vh;
+    top: 0;
+    left: 0;
+}
+[data-bs-theme='dark'] .squares-pattern::after {
+    background-image: linear-gradient(#47e76c 1px, transparent 1px), linear-gradient(to right, #47e76c 1px, #000000 1px);
+}
+.blur-card {
+    border-radius: 100%/85%;
+    background-color: rgba(255, 255, 255, 0.75);
+    box-shadow: 0 0 64px 64px rgba(255, 255, 255, 0.75);
+}
+[data-bs-theme='dark'] .blur-card {
+    background-color: rgba(34, 37, 41, 0.75);
+    box-shadow: 0 0 64px 64px rgba(34, 37, 41, 0.75);
+}

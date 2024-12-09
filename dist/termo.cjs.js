@@ -23,8 +23,7 @@ const DOM = {
     appendChild(parent, child) {
         parent.appendChild(child);
     },
-    injectStylesheet(styleSheet) {
-        const id = 'termo-styles';
+    injectStylesheet(id, styleSheet) {
         //check if stylesheet is already injected
         if (document.querySelector('#' + id)) {
             return;
@@ -67,6 +66,8 @@ typeof SuppressedError === "function" ? SuppressedError : function (error, suppr
     var e = new Error(message);
     return e.name = "SuppressedError", e.error = error, e.suppressed = suppressed, e;
 };
+
+var version = "0.0.1";
 
 const Utils = {
     // Function to generate random string for id
@@ -121,9 +122,12 @@ const Utils = {
     getInitOptions(opts) {
         const defaultOptions = {
             playSound: true,
-            hotKey: 'Control+Space',
-            welcomeMessage: 'Welcome to termo!',
+            title: 'termo',
+            welcomeMessage: `Welcome to termo v${version}!`,
             theme: 'light',
+            id: 'termo',
+            fontFamily: 'Courier New, monospace',
+            prompt: '$',
             commands: [
                 {
                     command: 'joke',
@@ -160,16 +164,21 @@ const Utils = {
                 allowTransparency: true,
             },
         };
+        // console.log('>>>>>>----  utils:98 ', JSON.parse(JSON.stringify(opts)));
         const mergedOptions = Object.assign(Object.assign({}, defaultOptions), opts);
         return mergedOptions;
     },
+    titleID(title) {
+        //md5 hash the title
+        return btoa(title).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
+    },
 };
 
-const soundTerminalOpen = new Audio('https://stripe.dev/audio/terminal_open.mp3');
+const soundTerminalOpen = new Audio('https://raw.githubusercontent.com/rajnandan1/termo/main/sounds/terminal_open.mp3');
 soundTerminalOpen.preload = 'auto';
-const soundTerminalClose = new Audio('https://stripe.dev/audio/terminal_close.mp3');
+const soundTerminalClose = new Audio('https://raw.githubusercontent.com/rajnandan1/termo/main/sounds/terminal_close.mp3');
 soundTerminalClose.preload = 'auto';
-const soundRunCommand = new Audio('https://stripe.dev/audio/run_command.mp3');
+const soundRunCommand = new Audio('https://raw.githubusercontent.com/rajnandan1/termo/main/sounds/run_command.mp3');
 soundRunCommand.preload = 'auto';
 var Sounds = {
     terminalOpen: function (opts) {
@@ -195,62 +204,7 @@ var Sounds = {
     },
 };
 
-const Stylesheet = `
-	* {
-		box-sizing: border-box;
-	}
-	
-	.termo-container{
-		position: fixed;
-		bottom: 12px;
-		right: 12px;
-		border: 1px solid #011627;
-		width: 705px;
-		max-width: 100vw;
-		height: 482px;
-		padding: 8px 4px 4px;
-		gap: 8px;
-		display: flex;
-		flex-direction: column;
-		z-index: 10;
-		transition: transform 0.3s ease, width 0.3s ease, height 0.3s ease;
-		background: rgba(255, 255, 255, 0.2);
-		box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-		backdrop-filter: blur(5px);
-		-webkit-backdrop-filter: blur(5px);
-	}
-	.termo-header{
-		display: flex;
-		justify-content: space-between;
-		line-height: 1;
-		cursor: grab;
-		padding: 1px 4px;
-		font-size: 14px;
-		font-family: monospace;
-		text-transform: uppercase;
-		font-weight: 300;
-		user-select: none;
-		color: #011627;
-
-		.termo-close-button{
-			cursor: pointer;
-		}
-		.termo-resize-button{
-			cursor: pointer;
-		}
-	}
-	.dark .termo-header{
-		color: #fefefe;
-	}
-	.termo-container .termo-terminal{
-		background-color: transparent;
-		border: 1px solid transparent;
-		border-radius: 4px;
-		padding: 0px;
-		flex-grow: 1;
-		overflow: auto;
-	}
-	
+const xtermCSS = `
 .xterm {
     cursor: text;
 	padding: 10px;
@@ -406,8 +360,78 @@ const Stylesheet = `
     position: relative;
 }
 `;
+const Stylesheet = `
+	
+	
+	#termo-{{titleID}}-container{
+		box-sizing: border-box;
+		font-family: {{fontFamily}};
+		position: fixed;
+		bottom: 12px;
+		right: 12px;
+		border: 1px solid #011627;
+		width: 705px;
+		max-width: 100vw;
+		height: 482px;
+		padding: 8px 4px 4px;
+		gap: 8px;
+		display: flex;
+		flex-direction: column;
+		z-index: 2147483647;
+		transition: transform 0.3s ease, width 0.3s ease, height 0.3s ease;
+		background: rgba(255, 255, 255, 0.2);
+		box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+		backdrop-filter: blur(5px);
+		-webkit-backdrop-filter: blur(5px);
+		
+	}
+	.termo-container *{
+		font-family: {{fontFamily}};
+		box-sizing: border-box;
+	}
+		
+	.termo-header{
+		display: flex;
+		justify-content: space-between;
+		line-height: 1;
+		cursor: grab;
+		padding: 1px 4px;
+		font-size: 14px;
+		font-weight: 500;
+		font-family: monospace;
+		text-transform: uppercase;
+		user-select: none;
+		color: #011627;
+
+		.termo-close-button{
+			cursor: pointer;
+		}
+		.termo-resize-button{
+			cursor: pointer;
+		}
+	}
+	.darker .termo-header{
+		color: #fefefe;
+	}
+	.termo-container .termo-terminal{
+		background-color: transparent;
+		border: 1px solid transparent;
+		border-radius: 4px;
+		padding: 0px;
+		flex-grow: 1;
+		overflow: auto;
+	}
+
+	${xtermCSS}
+
+
+`;
 function Stylesheet$1 (opts) {
-    return Stylesheet;
+    let fontFamily = opts.fontFamily;
+    let titleID = opts.id;
+    let newStyle = Stylesheet.replace(/{{fontFamily}}/g, fontFamily);
+    newStyle = newStyle.replace(/{{titleID}}/g, titleID);
+    return newStyle;
 }
 
 var xterm = {exports: {}};
@@ -458,259 +482,343 @@ function requireAddonWebLinks () {
 
 var addonWebLinksExports = requireAddonWebLinks();
 
-const TerminalManager = (div, opts) => {
-    let terminalOptions = opts.terminalOptions;
-    const terminal = new xtermExports.Terminal(terminalOptions);
-    const fitAddon = new addonFitExports.FitAddon();
-    const webLinksAddon = new addonWebLinksExports.WebLinksAddon();
-    terminal.open(div);
-    terminal.loadAddon(fitAddon);
-    terminal.loadAddon(webLinksAddon);
-    fitAddon.fit();
-    const handleResize = () => fitAddon.fit();
-    window.addEventListener('resize', handleResize);
-    let userCommands = opts.commands;
-    //create help command
-    userCommands.push({
-        command: 'help',
-        description: 'List all commands',
-        action: (terminal) => __awaiter(void 0, void 0, void 0, function* () {
-            terminal.write(`\r\nCommands:\r\n`);
-            userCommands.forEach((cmd) => {
-                terminal.write(`  ${cmd.command} - ${cmd.description}\r\n`);
-            });
-        }),
-    });
-    // Add command history
-    let commandHistory = [];
-    let historyIndex = -1;
-    let inputBuffer = '';
-    // Add color codes
-    const GREEN = '\x1b[32m';
-    const RESET = '\x1b[0m';
-    const prompt = `${GREEN}$${RESET} `;
-    if (!!opts.welcomeMessage) {
-        terminal.write('\x1b[3m');
-        terminal.write(opts.welcomeMessage);
-        terminal.write('\x1b[0m');
-        terminal.write('\r\n');
-    }
-    terminal.write('-'.repeat(terminal.cols));
-    terminal.write('\r\n');
-    terminal.write("Type 'help' to list all available commands");
-    terminal.write('\r\n');
-    terminal.write('-'.repeat(terminal.cols));
-    terminal.write(`\r\n${prompt}`);
-    terminal.onData((data) => __awaiter(void 0, void 0, void 0, function* () {
-        const key = data.charCodeAt(0);
-        // Handle Ctrl+C
-        if (key === 3) {
-            inputBuffer = '';
-            historyIndex = -1;
-            terminal.write('^C');
-            terminal.write(`\r\n${prompt}`);
-            return;
-        }
-        // Handle up arrow (27 91 65)
-        if (data === '\x1b[A') {
-            if (historyIndex < commandHistory.length - 1) {
-                historyIndex++;
-                // Clear current line
-                terminal.write('\x1b[2K\r');
-                terminal.write(`${prompt}`);
-                // Show command from history
-                inputBuffer = commandHistory[commandHistory.length - 1 - historyIndex];
-                terminal.write(inputBuffer);
-            }
-            return;
-        }
-        // Handle down arrow (27 91 66)
-        if (data === '\x1b[B') {
-            if (historyIndex > 0) {
-                historyIndex--;
-                terminal.write('\x1b[2K\r');
-                terminal.write(`${prompt}`);
-                inputBuffer = commandHistory[commandHistory.length - 1 - historyIndex];
-                terminal.write(inputBuffer);
-            }
-            else if (historyIndex === 0) {
-                historyIndex = -1;
-                terminal.write('\x1b[2K\r');
-                terminal.write(`${prompt}`);
-                inputBuffer = '';
-            }
-            return;
-        }
-        // Handle Enter
-        if (data === '\r') {
-            if (inputBuffer.length > 0) {
-                commandHistory.push(inputBuffer);
-                historyIndex = -1;
-            }
-            else {
-                terminal.write(`\r\n${prompt}`);
-                return;
-            }
-            Sounds.runCommand(opts);
-            if (inputBuffer.trim() === 'clear') {
-                // Clear screen and scroll buffer
+class TerminalManager {
+    constructor(div, optsReceived) {
+        this.handleResize = () => {
+            this.fitAddon.fit();
+        };
+        this.opts = Object.assign({}, optsReceived);
+        this.terminalOptions = this.opts.terminalOptions;
+        this.terminal = new xtermExports.Terminal(this.terminalOptions);
+        this.fitAddon = new addonFitExports.FitAddon();
+        this.webLinksAddon = new addonWebLinksExports.WebLinksAddon();
+        this.terminal.open(div);
+        this.terminal.loadAddon(this.fitAddon);
+        this.terminal.loadAddon(this.webLinksAddon);
+        this.fitAddon.fit();
+        window.addEventListener('resize', this.handleResize);
+        this.userCommands = this.opts.commands;
+        //create help command
+        this.userCommands.push({
+            command: 'help',
+            description: 'List all commands',
+            action: (terminal) => __awaiter(this, void 0, void 0, function* () {
+                terminal.write(`\r\nCommands:\r\n`);
+                this.userCommands.forEach((cmd) => {
+                    terminal.write(`  ${cmd.command} - ${cmd.description}\r\n`);
+                });
+            }),
+        });
+        // Create clear command
+        this.userCommands.push({
+            command: 'clear',
+            description: 'Clear the terminal screen',
+            action: (terminal) => __awaiter(this, void 0, void 0, function* () {
                 terminal.write('\x1b[2J'); // Clear screen
                 terminal.write('\x1b[H'); // Move cursor to home position
-                terminal.write(`${prompt}`); // New prompt
-                inputBuffer = '';
+            }),
+        });
+        this.commandHistory = [];
+        this.historyIndex = -1;
+        this.inputBuffer = '';
+        // Add color codes
+        const GREEN = '\x1b[32m';
+        const RESET = '\x1b[0m';
+        const prompt = `${GREEN}${this.opts.prompt}${RESET} `;
+        if (!!this.opts.welcomeMessage) {
+            this.terminal.write('\x1b[3m');
+            this.terminal.write(this.opts.welcomeMessage);
+            this.terminal.write('\x1b[0m');
+            this.terminal.write('\r\n');
+        }
+        this.terminal.write('-'.repeat(this.terminal.cols));
+        this.terminal.write('\r\n');
+        this.terminal.write("Type 'help' to list all available commands");
+        this.terminal.write('\r\n');
+        this.terminal.write('-'.repeat(this.terminal.cols));
+        this.terminal.write(`\r\n${prompt}`);
+        this.terminal.onData((data) => __awaiter(this, void 0, void 0, function* () {
+            const key = data.charCodeAt(0);
+            // Handle Ctrl+C
+            if (key === 3) {
+                this.inputBuffer = '';
+                this.historyIndex = -1;
+                this.terminal.write('^C');
+                this.terminal.write(`\r\n${prompt}`);
                 return;
             }
-            //find command
-            let cmd = userCommands.find((c) => c.command === inputBuffer.split(' ')[0]);
-            if (cmd) {
-                //has subcommands, then show the usage of the commands if no subcommand is provided
-                if (cmd.subCommands) {
-                    if (inputBuffer.split(' ').length === 1) {
-                        terminal.write(`\r\nUsage: ${cmd.command} <subcommand>`);
-                        terminal.write(`\r\nSubcommands:\r\n`);
-                        cmd.subCommands.forEach((subCmd) => {
-                            terminal.write(`  ${subCmd.command} - ${subCmd.description}\r\n`);
-                        });
-                    }
-                    else {
-                        let subCmd = cmd.subCommands.find((c) => c.command === inputBuffer.split(' ')[1]);
-                        if (subCmd) {
-                            subCmd.action(terminal, inputBuffer.split(' ').slice(2));
+            // Handle up arrow (27 91 65)
+            if (data === '\x1b[A') {
+                if (this.historyIndex < this.commandHistory.length - 1) {
+                    this.historyIndex++;
+                    // Clear current line
+                    this.terminal.write('\x1b[2K\r');
+                    this.terminal.write(`${prompt}`);
+                    // Show command from history
+                    this.inputBuffer = this.commandHistory[this.commandHistory.length - 1 - this.historyIndex];
+                    this.terminal.write(this.inputBuffer);
+                }
+                return;
+            }
+            // Handle down arrow (27 91 66)
+            if (data === '\x1b[B') {
+                if (this.historyIndex > 0) {
+                    this.historyIndex--;
+                    this.terminal.write('\x1b[2K\r');
+                    this.terminal.write(`${prompt}`);
+                    this.inputBuffer = this.commandHistory[this.commandHistory.length - 1 - this.historyIndex];
+                    this.terminal.write(this.inputBuffer);
+                }
+                else if (this.historyIndex === 0) {
+                    this.historyIndex = -1;
+                    this.terminal.write('\x1b[2K\r');
+                    this.terminal.write(`${prompt}`);
+                    this.inputBuffer = '';
+                }
+                return;
+            }
+            // Handle Enter
+            if (data === '\r') {
+                if (this.inputBuffer.length > 0) {
+                    this.commandHistory.push(this.inputBuffer);
+                    this.historyIndex = -1;
+                }
+                else {
+                    this.terminal.write(`\r\n${prompt}`);
+                    return;
+                }
+                Sounds.runCommand(this.opts);
+                if (this.inputBuffer.trim() === 'clear') {
+                    // Clear screen and scroll buffer
+                    this.terminal.write('\x1b[2J'); // Clear screen
+                    this.terminal.write('\x1b[H'); // Move cursor to home position
+                    this.terminal.write(`${prompt}`); // New prompt
+                    this.inputBuffer = '';
+                    return;
+                }
+                //find command
+                let cmd = this.userCommands.find((c) => c.command === this.inputBuffer.split(' ')[0]);
+                if (cmd) {
+                    //has subcommands, then show the usage of the commands if no subcommand is provided
+                    if (cmd.subCommands) {
+                        if (this.inputBuffer.split(' ').length === 1) {
+                            this.terminal.write(`\r\nUsage: ${cmd.command} <subcommand>`);
+                            this.terminal.write(`\r\nSubcommands:\r\n`);
+                            cmd.subCommands.forEach((subCmd) => {
+                                this.terminal.write(`  ${subCmd.command} - ${subCmd.description}\r\n`);
+                            });
                         }
                         else {
-                            terminal.write(`\r\nSubcommand not found: ${inputBuffer.split(' ')[1]}`);
+                            let subCmd = cmd.subCommands.find((c) => c.command === this.inputBuffer.split(' ')[1]);
+                            if (subCmd) {
+                                subCmd.action(this.terminal, this.inputBuffer.split(' ').slice(2));
+                            }
+                            else {
+                                this.terminal.write(`\r\nSubcommand not found: ${this.inputBuffer.split(' ')[1]}. Type 'help' to list all available commands`);
+                            }
                         }
+                    }
+                    else {
+                        yield cmd.action(this.terminal, this.inputBuffer.split(' ').slice(1));
                     }
                 }
                 else {
-                    yield cmd.action(terminal, inputBuffer.split(' ').slice(1));
+                    this.terminal.write(`\r\nCommand not found: ${this.inputBuffer}. Type 'help' to list all available commands`);
                 }
+                this.inputBuffer = '';
+                this.terminal.write(`\r\n${prompt}`);
+                return;
             }
-            else {
-                terminal.write(`\r\nCommand not found: ${inputBuffer}`);
-            }
-            inputBuffer = '';
-            terminal.write(`\r\n${prompt}`);
-            return;
-        }
-        // Handle backspace
-        if (data === '\x7f') {
-            if (inputBuffer.length > 0) {
-                inputBuffer = inputBuffer.slice(0, -1);
-                terminal.write('\b \b');
-            }
-            return;
-        }
-        // Add character to buffer and echo
-        inputBuffer += data;
-        terminal.write(data);
-    }));
-    return terminal;
-};
-
-function LetsGo(options) {
-    options = Utils.getInitOptions(options);
-    const styleSheet = Stylesheet$1();
-    DOM.injectStylesheet(styleSheet);
-    // Create the container
-    let containerID = Utils.generateId('termo-container');
-    let container = DOM.createDiv(containerID, 'termo-container');
-    // Create the header
-    let headerID = Utils.generateId('termo-header');
-    let header = DOM.createDiv(headerID, 'termo-header');
-    if (options.theme === 'dark') {
-        container.classList.add('dark');
-    }
-    let mode = 'floating';
-    let state = 'closed';
-    // Create the resize button
-    let resizeButton = DOM.createDiv(Utils.generateId('termo-resize-button'), 'termo-resize-button');
-    resizeButton.innerHTML = dock;
-    DOM.appendChild(header, resizeButton);
-    //add a click event to resize the terminal
-    resizeButton.addEventListener('click', () => {
-        container.style.removeProperty('top');
-        container.style.removeProperty('left');
-        if (mode == 'floating') {
-            container.style.height = '300px';
-            container.style.width = '100vw';
-            container.style.right = '0px';
-            container.style.bottom = '0px';
-            mode = 'docked';
-            resizeButton.innerHTML = pop;
-        }
-        else {
-            container.style.width = '705px';
-            container.style.height = '482px';
-            container.style.right = '12px';
-            container.style.bottom = '12px';
-            mode = 'floating';
-            resizeButton.innerHTML = dock;
-        }
-        terminalManager.focus();
-    });
-    // Create title div
-    let titleDiv = DOM.createDiv(Utils.generateId('termo-title'), 'termo-title');
-    titleDiv.innerHTML = 'termo';
-    DOM.appendChild(header, titleDiv);
-    // Create the close button
-    let closeButton = DOM.createDiv(Utils.generateId('termo-close-button'), 'termo-close-button');
-    closeButton.innerHTML = close;
-    DOM.appendChild(header, closeButton);
-    //add a click event to close the terminal
-    closeButton.addEventListener('click', () => {
-        hide();
-    });
-    // Append the header to the container
-    DOM.appendChild(container, header);
-    // Create the terminal
-    let terminalID = Utils.generateId('termo-terminal');
-    let terminal = DOM.createDiv(terminalID, 'termo-terminal');
-    DOM.appendChild(container, terminal);
-    container.style.transform = 'scale(0)';
-    DOM.appendChild(document.body, container);
-    //make container draggable
-    const terminalManager = TerminalManager(terminal, options);
-    Utils.containerDraggable(container, header);
-    container.style.bottom = '12px';
-    container.style.right = '12px';
-    //check if hotKey is there, if yes add event listener
-    if (!!options.hotKey) {
-        window.addEventListener('keydown', (e) => {
-            if (e.key === options.hotKey) {
-                if (state === 'closed') {
-                    e.preventDefault();
-                    show();
+            // Handle backspace
+            if (data === '\x7f') {
+                if (this.inputBuffer.length > 0) {
+                    this.inputBuffer = this.inputBuffer.slice(0, -1);
+                    this.terminal.write('\b \b');
                 }
+                return;
             }
-        });
+            // Add character to buffer and echo
+            this.inputBuffer += data;
+            this.terminal.write(data);
+        }));
     }
-    function show() {
-        Sounds.terminalOpen(options);
-        container.style.transform = 'scale(1)';
-        terminalManager.focus();
-        state = 'open';
+    destroy() {
+        window.removeEventListener('resize', this.handleResize);
+        // Dispose addons
+        this.fitAddon.dispose();
+        this.webLinksAddon.dispose();
+        // Dispose terminal
+        this.terminal.dispose();
+        // // Clear any references
+        this.userCommands = [];
+        this.inputBuffer = '';
+        this.commandHistory = [];
     }
-    function hide() {
-        state = 'closed';
-        Sounds.terminalClose(options);
-        container.style.transform = 'scale(0)';
+    focus() {
+        this.terminal.focus();
     }
-    function setTheme(theme) {
-        if (theme === 'dark') {
-            container.classList.add('dark');
-        }
-        else {
-            container.classList.remove('dark');
-        }
-    }
-    return {
-        show: show,
-        hide: hide,
-        terminal: terminalManager,
-        setTheme,
-    };
 }
 
-exports.LetsGo = LetsGo;
+class Termo {
+    //define constructor arguments
+    constructor(options) {
+        if (!!!options.title) {
+            throw new Error('title is required');
+        }
+        options.id = Utils.titleID(options.title);
+        this.options = Utils.getInitOptions(options);
+        this.mode = 'floating';
+        this.state = 'initiated';
+        this.container = undefined;
+    }
+    /**
+     * Creates a new terminal instance with the specified options.
+     *
+     * This method initializes the terminal container, header, and various control buttons
+     * (resize, close). It also sets up event listeners for these buttons to handle terminal
+     * resizing and closing actions. The terminal is appended to the document body and made
+     * draggable.
+     *
+     * @throws {Error} If a terminal with the same title already exists.
+     */
+    create() {
+        //define show method
+        let containerID = `termo-${this.options.id}-container`;
+        let existingContainer = document.querySelector(`#${containerID}`);
+        if (existingContainer) {
+            throw new Error('Terminal with the same title already exists');
+        }
+        const styleSheet = Stylesheet$1(this.options);
+        DOM.injectStylesheet(this.options.id, styleSheet);
+        this.container = DOM.createDiv(containerID, 'termo-container');
+        let headerID = Utils.generateId('termo-header');
+        let header = DOM.createDiv(headerID, 'termo-header');
+        if (this.options.theme === 'dark') {
+            this.container.classList.add('darker');
+        }
+        let resizeButton = DOM.createDiv(Utils.generateId('termo-resize-button'), 'termo-resize-button');
+        resizeButton.innerHTML = dock;
+        DOM.appendChild(header, resizeButton);
+        resizeButton.addEventListener('click', () => {
+            if (this.container) {
+                this.container.style.removeProperty('left');
+                this.container.style.removeProperty('top');
+                if (this.mode == 'floating') {
+                    this.dock();
+                    this.mode = 'docked';
+                    resizeButton.innerHTML = pop;
+                }
+                else {
+                    this.float();
+                    this.mode = 'floating';
+                    resizeButton.innerHTML = dock;
+                }
+                //terminalManager.terminal.focus();
+            }
+        });
+        let titleDiv = DOM.createDiv(Utils.generateId('termo-title'), 'termo-title');
+        titleDiv.innerHTML = this.options.title;
+        DOM.appendChild(header, titleDiv);
+        let closeButton = DOM.createDiv(Utils.generateId('termo-close-button'), 'termo-close-button');
+        closeButton.innerHTML = close;
+        DOM.appendChild(header, closeButton);
+        //add a click event to close the terminal
+        closeButton.addEventListener('click', () => {
+            this.hide();
+        });
+        // Append the header to the container
+        DOM.appendChild(this.container, header);
+        let terminalID = Utils.generateId('termo-terminal');
+        let terminal = DOM.createDiv(terminalID, 'termo-terminal');
+        DOM.appendChild(this.container, terminal);
+        this.container.style.transform = 'scale(0)';
+        DOM.appendChild(document.body, this.container);
+        Utils.containerDraggable(this.container, header);
+        this.container.style.bottom = '12px';
+        this.container.style.right = '12px';
+        this.terminalManager = new TerminalManager(terminal, this.options);
+        this.state = 'minimized';
+    }
+    float() {
+        if (this.container) {
+            this.container.style.width = '705px';
+            this.container.style.height = '482px';
+            this.container.style.right = '12px';
+            this.container.style.bottom = '12px';
+        }
+        else {
+            throw new Error('Terminal not created');
+        }
+    }
+    dock() {
+        if (this.container) {
+            this.container.style.height = '300px';
+            this.container.style.width = '100vw';
+            this.container.style.right = '0px';
+            this.container.style.bottom = '0px';
+        }
+        else {
+            throw new Error('Terminal not created');
+        }
+    }
+    hide() {
+        if (this.container) {
+            Sounds.terminalClose(this.options);
+            this.container.style.transform = 'scale(0)';
+            this.state = 'minimized';
+        }
+        else {
+            throw new Error('Terminal not created');
+        }
+    }
+    show() {
+        var _a;
+        if (this.container) {
+            Sounds.terminalOpen(this.options);
+            this.container.style.transform = 'scale(1)';
+            this.state = 'open';
+            (_a = this.terminalManager) === null || _a === void 0 ? void 0 : _a.terminal.focus();
+        }
+        else {
+            throw new Error('Terminal not created');
+        }
+    }
+    /**
+     * Sets the theme of the terminal.
+     *
+     * @param theme - The theme to set, either 'dark' or 'light'.
+     * @throws Will throw an error if the terminal container is not created.
+     */
+    setTheme(theme) {
+        if (this.container) {
+            if (theme === 'dark') {
+                this.container.classList.add('darker');
+            }
+            else {
+                this.container.classList.remove('darker');
+            }
+        }
+        else {
+            throw new Error('Terminal not created');
+        }
+    }
+    destroy() {
+        var _a;
+        if (this.container) {
+            (_a = this.terminalManager) === null || _a === void 0 ? void 0 : _a.destroy();
+            document.body.removeChild(this.container);
+            //remove the stylesheet also
+            document.head.removeChild(document.getElementById(this.options.id));
+            this.container = undefined;
+            delete this.terminalManager;
+            this.state = 'destroyed';
+            this.mode = 'floating';
+        }
+        else {
+            throw new Error('Terminal not created');
+        }
+    }
+}
+
+module.exports = Termo;
 //# sourceMappingURL=termo.cjs.js.map

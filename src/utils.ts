@@ -1,4 +1,5 @@
 import { InitOptions } from './types';
+import * as packageInfo from '../package.json';
 const Utils = {
     // Function to generate random string for id
     generateId(prefix: string): string {
@@ -54,9 +55,12 @@ const Utils = {
     getInitOptions(opts: InitOptions): InitOptions {
         const defaultOptions: InitOptions = {
             playSound: true,
-            hotKey: 'Control+Space',
-            welcomeMessage: 'Welcome to termo!',
+            title: 'termo',
+            welcomeMessage: `Welcome to termo v${packageInfo.version}!`,
             theme: 'light',
+            id: 'termo',
+            fontFamily: 'Courier New, monospace',
+            prompt: '$',
             commands: [
                 {
                     command: 'joke',
@@ -92,8 +96,14 @@ const Utils = {
                 allowTransparency: true,
             },
         };
+        // console.log('>>>>>>----  utils:98 ', JSON.parse(JSON.stringify(opts)));
         const mergedOptions = { ...defaultOptions, ...opts };
         return mergedOptions;
+    },
+
+    titleID(title: string): string {
+        //md5 hash the title
+        return btoa(title).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
     },
 };
 

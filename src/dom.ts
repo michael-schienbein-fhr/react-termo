@@ -13,8 +13,7 @@ const DOM = {
     appendChild(parent: HTMLElement, child: HTMLElement): void {
         parent.appendChild(child);
     },
-    injectStylesheet(styleSheet: string): void {
-        const id = 'termo-styles';
+    injectStylesheet(id: string, styleSheet: string): void {
         //check if stylesheet is already injected
         if (document.querySelector('#' + id)) {
             return;

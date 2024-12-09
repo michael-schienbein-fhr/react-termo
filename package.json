@@ -1,6 +1,6 @@
 {
     "name": "@rajnandan1/termo",
-    "version": "1.0.0",
+    "version": "0.0.1",
     "description": "A terminal emulator for the web",
     "type": "module",
     "main": "dist/termo.min.js",
@@ -24,6 +24,7 @@
     "license": "MIT",
     "devDependencies": {
         "@rollup/plugin-commonjs": "^28.0.1",
+        "@rollup/plugin-json": "^6.1.0",
         "@rollup/plugin-node-resolve": "^15.3.0",
         "@rollup/plugin-terser": "^0.4.4",
         "@types/xterm": "^2.0.3",

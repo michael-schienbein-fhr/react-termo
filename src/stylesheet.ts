@@ -1,60 +1,5 @@
 import { InitOptions } from './types';
-const Stylesheet = `
-	* {
-		box-sizing: border-box;
-	}
-	
-	.termo-container{
-		position: fixed;
-		bottom: 12px;
-		right: 12px;
-		border: 1px solid #011627;
-		width: 705px;
-		max-width: 100vw;
-		height: 482px;
-		padding: 8px 4px 4px;
-		gap: 8px;
-		display: flex;
-		flex-direction: column;
-		z-index: 10;
-		transition: transform 0.3s ease, width 0.3s ease, height 0.3s ease;
-		background: rgba(255, 255, 255, 0.2);
-		box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-		backdrop-filter: blur(5px);
-		-webkit-backdrop-filter: blur(5px);
-	}
-	.termo-header{
-		display: flex;
-		justify-content: space-between;
-		line-height: 1;
-		cursor: grab;
-		padding: 1px 4px;
-		font-size: 14px;
-		font-family: monospace;
-		text-transform: uppercase;
-		font-weight: 300;
-		user-select: none;
-		color: #011627;
-
-		.termo-close-button{
-			cursor: pointer;
-		}
-		.termo-resize-button{
-			cursor: pointer;
-		}
-	}
-	.dark .termo-header{
-		color: #fefefe;
-	}
-	.termo-container .termo-terminal{
-		background-color: transparent;
-		border: 1px solid transparent;
-		border-radius: 4px;
-		padding: 0px;
-		flex-grow: 1;
-		overflow: auto;
-	}
-	
+const xtermCSS = `
 .xterm {
     cursor: text;
 	padding: 10px;
@@ -211,6 +156,77 @@ const Stylesheet = `
 }
 `;
 
+const Stylesheet = `
+	
+	
+	#termo-{{titleID}}-container{
+		box-sizing: border-box;
+		font-family: {{fontFamily}};
+		position: fixed;
+		bottom: 12px;
+		right: 12px;
+		border: 1px solid #011627;
+		width: 705px;
+		max-width: 100vw;
+		height: 482px;
+		padding: 8px 4px 4px;
+		gap: 8px;
+		display: flex;
+		flex-direction: column;
+		z-index: 2147483647;
+		transition: transform 0.3s ease, width 0.3s ease, height 0.3s ease;
+		background: rgba(255, 255, 255, 0.2);
+		box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+		backdrop-filter: blur(5px);
+		-webkit-backdrop-filter: blur(5px);
+		
+	}
+	.termo-container *{
+		font-family: {{fontFamily}};
+		box-sizing: border-box;
+	}
+		
+	.termo-header{
+		display: flex;
+		justify-content: space-between;
+		line-height: 1;
+		cursor: grab;
+		padding: 1px 4px;
+		font-size: 14px;
+		font-weight: 500;
+		font-family: monospace;
+		text-transform: uppercase;
+		user-select: none;
+		color: #011627;
+
+		.termo-close-button{
+			cursor: pointer;
+		}
+		.termo-resize-button{
+			cursor: pointer;
+		}
+	}
+	.darker .termo-header{
+		color: #fefefe;
+	}
+	.termo-container .termo-terminal{
+		background-color: transparent;
+		border: 1px solid transparent;
+		border-radius: 4px;
+		padding: 0px;
+		flex-grow: 1;
+		overflow: auto;
+	}
+
+	${xtermCSS}
+
+
+`;
+
 export default function (opts: InitOptions) {
-    return Stylesheet;
+    let fontFamily = opts.fontFamily;
+    let titleID = opts.id;
+    let newStyle = Stylesheet.replace(/{{fontFamily}}/g, fontFamily);
+    newStyle = newStyle.replace(/{{titleID}}/g, titleID);
+    return newStyle;
 }

@@ -1,41 +1,267 @@
 <!doctype html>
 <html lang="en">
     <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Xterm.js Scrollable Terminal</title>
-        <link rel="stylesheet" href="https://unpkg.com/xterm/css/xterm.css" />
-        <script src="https://unpkg.com/xterm/lib/xterm.js"></script>
-        <style>
-            body {
-                margin: 0;
-                height: 100vh; /* Full height of the viewport */
-                overflow: auto; /* Allow scrolling */
-            }
-            #terminal {
-                width: 100%;
-                height: 100%; /* Full height of the body */
-                background-color: black; /* Optional background color */
-            }
-            [style*='position: absolute'][style*='top: -50000px'] {
-                display: none !important;
-            }
-        </style>
-    </head>
-    <body>
-        <div id="terminal"></div>
-        <script>
-            const term = new Terminal({
-                scrollback: 1000, // Set the scrollback buffer size
-                cursorBlink: true, // Optional: make the cursor blink
-            });
-            term.open(document.getElementById('terminal'));
-            term.write('Welcome to Xterm.js Demo\n');
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>Termo Demo</title>
+        <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+            rel="stylesheet"
+            integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+            crossorigin="anonymous"
+        />
+        <script
+            src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+            crossorigin="anonymous"
+        ></script>
+        <!-- include jquery -->
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <link rel="stylesheet" href="styles.css" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link href="https://fonts.googleapis.com/css2?family=Sono:wght@200..800&display=swap" rel="stylesheet" />
+        <script src="dist/termo.min.js"></script>
+        <!-- Highlight.js CSS -->
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/atom-one-dark.min.css"
+        />
 
-            // Handle user input and echo it back
-            term.onData((data) => {
-                term.write(data); // Echo back the input
-            });
-        </script>
+        <!-- Highlight.js JS -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+    </head>
+    <body data-bs-theme="dark">
+        <div class="squares-pattern"></div>
+		<div class="sidebar " style="position: fixed; right: 0; top: 0; width: 250px; height: 100%;  display: flex; padding-top: 50px;">
+			<ul class="nav flex-column blur-card">
+				<li class="nav-item">
+					<a class="nav-link  " href="#installation">Installation</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link " href="#quick-start">Quick Start</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link " href="#options">Options</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link " href="#api">API</a>
+				</li>
+			</ul>
+		</div>
+        <div class="container my-5" style="position: relative; max-width: 820px">
+            <h1 class="blur-card">Termo</h1>
+            <div class="col-lg-12 px-0 blur-card">
+                <p class="fs-5">
+                    Termo is a simple terminal emulator that can be used to create a terminal-like interface on your
+                    website. It is inspired by the terminal emulator in <a href="https://stripe.dev">stripe.dev</a>. It
+                    is an wrapper on top of xterm.js.
+                </p>
+                <div class="">
+                    <button id="fireup" class="btn btn-lg btn-primary">Fire UP</button>
+                    <span> Or Press [C] </span>
+                </div>
+            </div>
+            <hr class="my-5" />
+            <section class="mt-4">
+                <h3>Installation</h3>
+                <ul class="nav nav-tabs" id="myTab" role="tablist">
+                    <li class="nav-item">
+                        <a
+                            class="nav-link active"
+                            id="cdn-tab"
+                            data-bs-toggle="tab"
+                            href="#cdn"
+                            role="tab"
+                            aria-controls="cdn"
+                            aria-selected="true"
+                            >CDN</a
+                        >
+                    </li>
+                    <li class="nav-item">
+                        <a
+                            class="nav-link"
+                            id="npm-tab"
+                            data-bs-toggle="tab"
+                            href="#npm"
+                            role="tab"
+                            aria-controls="npm"
+                            aria-selected="false"
+                            >NPM</a
+                        >
+                    </li>
+                </ul>
+
+                <div class="tab-content border-start border-bottom border-end" id="myTabContent">
+                    <div class="tab-pane fade show active p-4" id="cdn" role="tabpanel" aria-labelledby="cdn-tab">
+                        <p class="">Include the following script tag in your HTML file.</p>
+                        <pre><code class="language-html">&lt;script src="https://cdn.jsdelivr.net/npm/termo/dist/termo.min.js"&gt;&lt;/script&gt;</code></pre>
+                    </div>
+                    <div class="tab-pane fade p-4" id="npm" role="tabpanel" aria-labelledby="npm-tab">
+                        <p>Install the package using npm.</p>
+                        <pre><code class="language-bash">npm install termo</code></pre>
+                    </div>
+                </div>
+            </section>
+
+            <section class="mt-4">
+                <h3>Quick Start</h3>
+                <p>Create a new instance of Termo by passing an object .</p>
+                <ul class="nav nav-tabs" id="myTab" role="tablist">
+                    <li class="nav-item">
+                        <a
+                            class="nav-link active"
+                            id="cdn2-tab"
+                            data-bs-toggle="tab"
+                            href="#cdn2"
+                            role="tab"
+                            aria-controls="cdn2"
+                            aria-selected="true"
+                            >CDN</a
+                        >
+                    </li>
+                    <li class="nav-item">
+                        <a
+                            class="nav-link"
+                            id="npm2-tab"
+                            data-bs-toggle="tab"
+                            href="#npm2"
+                            role="tab"
+                            aria-controls="npm2"
+                            aria-selected="false"
+                            >NPM</a
+                        >
+                    </li>
+                </ul>
+
+                <div class="tab-content border-start border-bottom border-end" id="myTabContent2">
+                    <div class="tab-pane fade show active p-4" id="cdn2" role="tabpanel" aria-labelledby="cdn2-tab">
+                        <p class="">Include the following script tag in your HTML file.</p>
+                        <pre><code class="language-javascript">const myTermo = new termo({
+  "title": "Termo",
+});
+myTermo.create();
+myTermo.show();
+						</code></pre>
+                    </div>
+                    <div class="tab-pane fade p-4" id="npm2" role="tabpanel" aria-labelledby="npm2-tab">
+                        <p>Install the package using npm.</p>
+                        <pre><code class="language-bash">npm install termo</code></pre>
+                    </div>
+                </div>
+            </section>
+            <section class="mt-4">
+                <h3>Options</h3>
+                <p>Termo accepts an object with the following options.</p>
+                <pre><code class="language-javascript">
+/**
+ * Configuration options for initializing the terminal
+ * @interface InitOptions
+ * 
+ * @property {boolean} [playSound=true] - Enable/disable terminal sound effects
+ * @property {string} [title='termo'] - Terminal window title
+ * @property {string} [welcomeMessage] - Initial message displayed when terminal opens
+ * @property {'light' | 'dark'} [theme='light'] - Terminal color theme
+ * @property {string} [id] - Unique identifier for the terminal instance
+ * @property {string} [fontFamily='Courier New, monospace'] - Font family for terminal text
+ * @property {string} [prompt='$'] - Terminal prompt character
+ * @property {Command[]} [commands=[]] - Array of available terminal commands
+ * @property {ITerminalOptions} [terminalOptions] - XTerm.js specific terminal options
+ * 
+ * @example
+ * const options: InitOptions = {
+ *   playSound: true,
+ *   title: 'My Terminal',
+ *   theme: 'dark',
+ *   commands: [{
+ *     command: 'hello',
+ *     description: 'Says hello',
+ *     action: async (terminal, args) => terminal.write('\r\nHello! ' + args.join(' ')),
+ *   }]
+ * };
+ */
+export interface InitOptions {
+    playSound?: boolean;
+    title?: string;
+    welcomeMessage?: string;
+    theme?: 'light' | 'dark';
+    id?: string;
+    fontFamily?: string;
+    prompt?: string;
+    commands?: Command[];
+    terminalOptions?: ITerminalOptions;
+}
+				</code></pre>
+				<h3 class="mt-4">Command</h3>
+				<p>Command object for defining terminal commands.</p>
+				<pre><code class="language-javascript">
+/**
+ * Represents a terminal command with its description, action and optional subcommands
+ * @interface Command
+ * 
+ * @property {string} command - The command name/identifier
+ * @property {string} description - Brief description of what the command does
+ * @property {function} action - Async function to execute when command is invoked
+ * @property {Command[]} [subCommands] - Optional array of nested subcommands
+ * 
+ * @example
+ * const myCommand: Command = {
+ *   command: 'git',
+ *   description: 'Git version control',
+ *   action: async (terminal, args) => {
+ *     terminal.write('Executing git command...\r\n');
+ *   },
+ *   subCommands: [{
+ *     command: 'status',
+ *     description: 'Show working tree status',
+ *     action: async (terminal) => {
+ *       terminal.write('git status output...\r\n');
+ *     }
+ *   }]
+ * };
+ */
+export interface Command {
+    command: string;
+    description: string;
+    action: (terminal: Terminal, args: string[]) => Promise<void>;
+    subCommands?: Command[];
+}
+				</code></pre>
+            </section>
+			<section class="mt-4">
+                <h3>API</h3>
+				<p>Termo exposes the following methods and variable.</p>
+				<pre><code class="language-javascript">const myTermo = new termo({
+	"title": "Termo",
+});</code></pre>
+				<h4 class="mt-4">Methods</h4>
+				<p>Termo has the following methods.</p>
+				<pre><code class="language-javascript">/**
+* Creates a new terminal instance with the specified options.
+* 
+* This method initializes the terminal container, header, and various control buttons
+* (resize, close). It also sets up event listeners for these buttons to handle terminal
+* resizing and closing actions. The terminal is appended to the document body and made
+* draggable.
+* 
+* @throws {Error} If a terminal with the same title already exists.
+*/
+myTermo.create();</code></pre>
+				<pre><code class="language-javascript">myTermo.show(); // Shows the terminal </code></pre>
+				<pre><code class="language-javascript">myTermo.hide(); // Hides the terminal </code></pre>
+				<pre><code class="language-javascript">/**
+* Sets the theme of the terminal.
+* 
+* @param theme - The theme to set, either 'dark' or 'light'.
+* @throws Will throw an error if the terminal container is not created.
+*/					
+myTermo.setTheme(); // Sets the theme. can be 'light' or 'dark' </code></pre>
+				<pre><code class="language-javascript">myTermo.destroy(); // Destroys the terminal </code></pre>
+				<pre><code class="language-javascript">myTermo.dock(); // Docks the terminal to bottom of the page </code></pre>
+				<pre><code class="language-javascript">myTermo.float(); // Floats the terminal to bottom-right of the page </code></pre>
+			</section>
+        </div>
+
+        <script src="main.js"></script>
     </body>
 </html>

@@ -1,11 +1,13 @@
 import { InitOptions } from './types';
-const soundTerminalOpen = new Audio('https://stripe.dev/audio/terminal_open.mp3');
+const soundTerminalOpen = new Audio('https://raw.githubusercontent.com/rajnandan1/termo/main/sounds/terminal_open.mp3');
 soundTerminalOpen.preload = 'auto';
 
-const soundTerminalClose = new Audio('https://stripe.dev/audio/terminal_close.mp3');
+const soundTerminalClose = new Audio(
+    'https://raw.githubusercontent.com/rajnandan1/termo/main/sounds/terminal_close.mp3',
+);
 soundTerminalClose.preload = 'auto';
 
-const soundRunCommand = new Audio('https://stripe.dev/audio/run_command.mp3');
+const soundRunCommand = new Audio('https://raw.githubusercontent.com/rajnandan1/termo/main/sounds/run_command.mp3');
 soundRunCommand.preload = 'auto';
 
 export default {

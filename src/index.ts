@@ -1,4 +1,4 @@
-import { InitOptions } from './types';
+import { InitOptions, TerminalManagerReturn } from './types';
 import { close, dock, pop } from './svgs';
 import DOM from './dom';
 import Utils from './utils';
@@ -6,121 +6,178 @@ import Sounds from './sounds';
 import Stylesheet from './stylesheet';
 import TerminalManager from './terminal';
 
-export function LetsGo(options: InitOptions) {
-    options = Utils.getInitOptions(options);
+class Termo {
+    options: InitOptions;
+    mode: 'floating' | 'docked';
+    state: 'minimized' | 'open' | 'destroyed' | 'initiated';
+    container: HTMLDivElement | undefined;
+    terminalManager: TerminalManager | undefined;
 
-    const styleSheet = Stylesheet(options);
-    DOM.injectStylesheet(styleSheet);
+    //define constructor arguments
 
-    // Create the container
-    let containerID = Utils.generateId('termo-container');
-    let container = DOM.createDiv(containerID, 'termo-container');
-
-    // Create the header
-    let headerID = Utils.generateId('termo-header');
-    let header = DOM.createDiv(headerID, 'termo-header');
-    if (options.theme === 'dark') {
-        container.classList.add('dark');
+    constructor(options: InitOptions) {
+        if (!!!options.title) {
+            throw new Error('title is required');
+        }
+        options.id = Utils.titleID(options.title);
+        this.options = Utils.getInitOptions(options);
+        this.mode = 'floating';
+        this.state = 'initiated';
+        this.container = undefined;
     }
 
-    let mode = 'floating';
-    let state = 'closed';
-    // Create the resize button
-    let resizeButton = DOM.createDiv(Utils.generateId('termo-resize-button'), 'termo-resize-button');
-    resizeButton.innerHTML = dock;
-    DOM.appendChild(header, resizeButton);
-    //add a click event to resize the terminal
-    resizeButton.addEventListener('click', () => {
-        container.style.removeProperty('top');
-        container.style.removeProperty('left');
-        if (mode == 'floating') {
-            container.style.height = '300px';
-            container.style.width = '100vw';
-            container.style.right = '0px';
-            container.style.bottom = '0px';
+    /**
+     * Creates a new terminal instance with the specified options.
+     *
+     * This method initializes the terminal container, header, and various control buttons
+     * (resize, close). It also sets up event listeners for these buttons to handle terminal
+     * resizing and closing actions. The terminal is appended to the document body and made
+     * draggable.
+     *
+     * @throws {Error} If a terminal with the same title already exists.
+     */
+    create() {
+        //define show method
+        let containerID = `termo-${this.options.id}-container`;
 
-            mode = 'docked';
-            resizeButton.innerHTML = pop;
-        } else {
-            container.style.width = '705px';
-            container.style.height = '482px';
-            container.style.right = '12px';
-            container.style.bottom = '12px';
-
-            mode = 'floating';
-            resizeButton.innerHTML = dock;
+        let existingContainer = document.querySelector(`#${containerID}`);
+        if (existingContainer) {
+            throw new Error('Terminal with the same title already exists');
         }
-        terminalManager.focus();
-    });
+        const styleSheet = Stylesheet(this.options);
+        DOM.injectStylesheet(this.options.id, styleSheet);
 
-    // Create title div
-    let titleDiv = DOM.createDiv(Utils.generateId('termo-title'), 'termo-title');
-    titleDiv.innerHTML = 'termo';
-    DOM.appendChild(header, titleDiv);
+        this.container = DOM.createDiv(containerID, 'termo-container');
 
-    // Create the close button
-    let closeButton = DOM.createDiv(Utils.generateId('termo-close-button'), 'termo-close-button');
-    closeButton.innerHTML = close;
-    DOM.appendChild(header, closeButton);
-    //add a click event to close the terminal
-    closeButton.addEventListener('click', () => {
-        hide();
-    });
+        let headerID = Utils.generateId('termo-header');
+        let header = DOM.createDiv(headerID, 'termo-header');
+        if (this.options.theme === 'dark') {
+            this.container.classList.add('darker');
+        }
 
-    // Append the header to the container
-    DOM.appendChild(container, header);
+        let resizeButton = DOM.createDiv(Utils.generateId('termo-resize-button'), 'termo-resize-button');
+        resizeButton.innerHTML = dock;
+        DOM.appendChild(header, resizeButton);
+        resizeButton.addEventListener('click', () => {
+            if (this.container) {
+                this.container.style.removeProperty('left');
+                this.container.style.removeProperty('top');
 
-    // Create the terminal
-    let terminalID = Utils.generateId('termo-terminal');
-    let terminal = DOM.createDiv(terminalID, 'termo-terminal');
-    DOM.appendChild(container, terminal);
-    container.style.transform = 'scale(0)';
-    DOM.appendChild(document.body, container);
-
-    //make container draggable
-
-    const terminalManager = TerminalManager(terminal, options);
-    Utils.containerDraggable(container, header);
-    container.style.bottom = '12px';
-    container.style.right = '12px';
-
-    //check if hotKey is there, if yes add event listener
-    if (!!options.hotKey) {
-        window.addEventListener('keydown', (e) => {
-            if (e.key === options.hotKey) {
-                if (state === 'closed') {
-                    e.preventDefault();
-                    show();
+                if (this.mode == 'floating') {
+                    this.dock();
+                    this.mode = 'docked';
+                    resizeButton.innerHTML = pop;
+                } else {
+                    this.float();
+                    this.mode = 'floating';
+                    resizeButton.innerHTML = dock;
                 }
+                //terminalManager.terminal.focus();
             }
         });
+
+        let titleDiv = DOM.createDiv(Utils.generateId('termo-title'), 'termo-title');
+        titleDiv.innerHTML = this.options.title;
+        DOM.appendChild(header, titleDiv);
+
+        let closeButton = DOM.createDiv(Utils.generateId('termo-close-button'), 'termo-close-button');
+        closeButton.innerHTML = close;
+        DOM.appendChild(header, closeButton);
+        //add a click event to close the terminal
+        closeButton.addEventListener('click', () => {
+            this.hide();
+        });
+
+        // Append the header to the container
+        DOM.appendChild(this.container, header);
+
+        let terminalID = Utils.generateId('termo-terminal');
+        let terminal = DOM.createDiv(terminalID, 'termo-terminal');
+        DOM.appendChild(this.container, terminal);
+        this.container.style.transform = 'scale(0)';
+        DOM.appendChild(document.body, this.container);
+        Utils.containerDraggable(this.container, header);
+        this.container.style.bottom = '12px';
+        this.container.style.right = '12px';
+
+        this.terminalManager = new TerminalManager(terminal, this.options);
+        this.state = 'minimized';
     }
 
-    function show() {
-        Sounds.terminalOpen(options);
-        container.style.transform = 'scale(1)';
-        terminalManager.focus();
-        state = 'open';
-    }
-
-    function hide() {
-        state = 'closed';
-        Sounds.terminalClose(options);
-        container.style.transform = 'scale(0)';
-    }
-
-    function setTheme(theme: 'dark' | 'light') {
-        if (theme === 'dark') {
-            container.classList.add('dark');
+    float() {
+        if (this.container) {
+            this.container.style.width = '705px';
+            this.container.style.height = '482px';
+            this.container.style.right = '12px';
+            this.container.style.bottom = '12px';
         } else {
-            container.classList.remove('dark');
+            throw new Error('Terminal not created');
         }
     }
 
-    return {
-        show: show,
-        hide: hide,
-        terminal: terminalManager,
-        setTheme,
-    };
+    dock() {
+        if (this.container) {
+            this.container.style.height = '300px';
+            this.container.style.width = '100vw';
+            this.container.style.right = '0px';
+            this.container.style.bottom = '0px';
+        } else {
+            throw new Error('Terminal not created');
+        }
+    }
+
+    hide() {
+        if (this.container) {
+            Sounds.terminalClose(this.options);
+            this.container.style.transform = 'scale(0)';
+            this.state = 'minimized';
+        } else {
+            throw new Error('Terminal not created');
+        }
+    }
+    show() {
+        if (this.container) {
+            Sounds.terminalOpen(this.options);
+            this.container.style.transform = 'scale(1)';
+            this.state = 'open';
+            this.terminalManager?.terminal.focus();
+        } else {
+            throw new Error('Terminal not created');
+        }
+    }
+
+    /**
+     * Sets the theme of the terminal.
+     *
+     * @param theme - The theme to set, either 'dark' or 'light'.
+     * @throws Will throw an error if the terminal container is not created.
+     */
+    setTheme(theme: 'dark' | 'light') {
+        if (this.container) {
+            if (theme === 'dark') {
+                this.container.classList.add('darker');
+            } else {
+                this.container.classList.remove('darker');
+            }
+        } else {
+            throw new Error('Terminal not created');
+        }
+    }
+
+    destroy() {
+        if (this.container) {
+            this.terminalManager?.destroy();
+            document.body.removeChild(this.container);
+            //remove the stylesheet also
+            document.head.removeChild(document.getElementById(this.options.id) as HTMLStyleElement);
+            this.container = undefined;
+            delete this.terminalManager;
+            this.state = 'destroyed';
+            this.mode = 'floating';
+        } else {
+            throw new Error('Terminal not created');
+        }
+    }
 }
+
+export default Termo;
