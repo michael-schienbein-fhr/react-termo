@@ -247,18 +247,73 @@ export interface Command {
 * @throws {Error} If a terminal with the same title already exists.
 */
 myTermo.create();</code></pre>
-				<pre><code class="language-javascript">myTermo.show(); // Shows the terminal </code></pre>
-				<pre><code class="language-javascript">myTermo.hide(); // Hides the terminal </code></pre>
+				<pre><code class="language-javascript">/**
+* Displays the terminal by applying a scale transformation to the container element.
+* If the container exists, it plays the terminal open sound, sets the state to 'open',
+* and focuses the terminal. If the container does not exist, it throws an error.
+*
+* @throws {Error} If the terminal container is not created.
+*/
+myTermo.show();  </code></pre>
+				<pre><code class="language-javascript">/**
+* Hides the terminal by scaling down its container element.
+* If the container exists, it plays the terminal close sound,
+* scales the container to zero, and updates the state to 'minimized'.
+* If the container does not exist, it throws an error.
+*
+* @throws {Error} If the terminal container is not created.
+*/
+myTermo.hide(); // Hides the terminal </code></pre>
 				<pre><code class="language-javascript">/**
 * Sets the theme of the terminal.
 * 
 * @param theme - The theme to set, either 'dark' or 'light'.
 * @throws Will throw an error if the terminal container is not created.
 */					
-myTermo.setTheme(); // Sets the theme. can be 'light' or 'dark' </code></pre>
-				<pre><code class="language-javascript">myTermo.destroy(); // Destroys the terminal </code></pre>
-				<pre><code class="language-javascript">myTermo.dock(); // Docks the terminal to bottom of the page </code></pre>
-				<pre><code class="language-javascript">myTermo.float(); // Floats the terminal to bottom-right of the page </code></pre>
+myTermo.setTheme();  </code></pre>
+				<pre><code class="language-javascript">/**
+* Destroys the terminal instance by performing the following actions:
+* - If the container exists:
+*   - Destroys the terminal manager.
+*   - Removes the container element from the document body.
+*   - Removes the associated stylesheet from the document head.
+*   - Sets the container to undefined.
+*   - Deletes the terminal manager.
+*   - Updates the state to 'destroyed'.
+*   - Sets the mode to 'floating'.
+* - If the container does not exist, throws an error indicating that the terminal was not created.
+*
+* @throws {Error} If the terminal was not created.
+*/
+myTermo.destroy();  </code></pre>
+				<pre><code class="language-javascript">/**
+* Adjusts the dimensions and position of the terminal container to dock it
+* at the bottom right corner of the viewport.
+* 
+* @throws {Error} Throws an error if the terminal container is not created.
+*/
+myTermo.dock();</code></pre>
+				<pre><code class="language-javascript">/**
+* Adjusts the dimensions and position of the container element to float it
+* at a specific size and position on the screen. If the container element
+* is not available, an error is thrown.
+*
+* @throws {Error} If the container element is not created.
+*/
+myTermo.float(); </code></pre>
+			</section>
+			<section class="mt-4">
+				<h4>Variables</h4>
+				<p>Termo has the following variables.</p>
+				<pre><code class="language-javascript">/**
+* @class Termo
+* @property {InitOptions} options - The initialization options for the terminal.
+* @property {'floating' | 'docked'} mode - The current mode of the terminal (floating or docked).
+* @property {'minimized' | 'open' | 'destroyed' | 'initiated'} state - The current state of the terminal.
+* @property {HTMLDivElement | undefined} container - The container element for the terminal.
+* @property {TerminalManager | undefined} terminalManager - The terminal manager instance.
+*/
+				</code></pre>
 			</section>
         </div>
 

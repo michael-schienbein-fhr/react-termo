@@ -5,7 +5,7 @@ const Utils = {
     generateId(prefix: string): string {
         return prefix + '-' + Math.random().toString(36).substring(2);
     },
-    containerDraggable(container: HTMLElement, header: HTMLElement) {
+    containerDraggable(container: HTMLElement, header: HTMLElement, mode: string) {
         let isDown = false;
         let startX: number;
         let startY: number;
@@ -23,7 +23,7 @@ const Utils = {
         });
 
         const onMouseMove = (e: MouseEvent) => {
-            if (!isDown) return;
+            if (!isDown || container.getAttribute('mode') == 'docked') return;
             e.preventDefault();
             const x = e.clientX - startX;
             const y = e.clientY - startY;
