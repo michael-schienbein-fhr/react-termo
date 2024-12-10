@@ -2,6 +2,8 @@
 
 Termo is a simple terminal emulator that can be used to create a terminal-like interface on your website. It is inspired by the terminal emulator in [stripe.dev](https://stripe.dev). It is an wrapper on top of xterm.js.
 
+<img src="demo.gif"/>
+
 ---
 
 ### Demo
