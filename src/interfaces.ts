@@ -1,5 +1,4 @@
 import { ITerminalOptions, Terminal } from '@xterm/xterm';
-declare module 'figlet/importable-fonts/standard';
 
 /**
  * Options for initializing the terminal.

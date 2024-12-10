@@ -1,7 +1,7 @@
 import { ITerminalOptions, Terminal } from '@xterm/xterm';
 import { FitAddon } from '@xterm/addon-fit';
 import { WebLinksAddon } from '@xterm/addon-web-links';
-import { InitOptions, Command } from './types';
+import { InitOptions, Command } from './interfaces';
 import Sounds from './sounds';
 
 class TerminalManager {
@@ -26,8 +26,6 @@ class TerminalManager {
         this.terminal.loadAddon(this.fitAddon);
         this.terminal.loadAddon(this.webLinksAddon);
         this.fitAddon.fit();
-
-        window.addEventListener('resize', this.handleResize);
 
         this.userCommands = this.opts.commands;
 
@@ -155,7 +153,7 @@ class TerminalManager {
                                 subCmd.action(this.terminal, this.inputBuffer.split(' ').slice(2));
                             } else {
                                 this.terminal.write(
-                                    `\r\nSubcommand not found: ${this.inputBuffer.split(' ')[1]}. Type 'help' to list all available commands`,
+                                    `\r\nSubcommand not found: ${this.inputBuffer.split(' ')[1]}. Type 'help' to list all available commands. And this is some text`,
                                 );
                             }
                         }
@@ -189,13 +187,7 @@ class TerminalManager {
         });
     }
 
-    handleResize = () => {
-        this.fitAddon.fit();
-    };
-
     destroy() {
-        window.removeEventListener('resize', this.handleResize);
-
         // Dispose addons
         this.fitAddon.dispose();
         this.webLinksAddon.dispose();
@@ -211,6 +203,11 @@ class TerminalManager {
 
     focus() {
         this.terminal.focus();
+    }
+    resize() {
+        setTimeout(() => {
+            this.fitAddon.fit();
+        }, 310);
     }
 }
 

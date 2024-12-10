@@ -5,15 +5,22 @@
     "type": "module",
     "main": "dist/termo.min.js",
     "module": "dist/termo.esm.js",
+    "types": "dist/index.d.ts",
+    "files": [
+        "dist",
+        "dist/types"
+    ],
     "exports": {
         ".": {
+            "types": "./dist/index.d.ts",
             "import": "./dist/termo.esm.js",
             "require": "./dist/termo.min.js"
         }
     },
     "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1",
-        "build": "rollup --bundleConfigAsCjs -c rollup.config.js",
+        "clean": "rm -rf dist",
+        "build:types": "tsc --emitDeclarationOnly",
+        "build": "npm run clean && npm run build:types && rollup --bundleConfigAsCjs -c rollup.config.js",
         "watch": "rollup --bundleConfigAsCjs -c rollup.config.js --watch",
         "prettify": "prettier --write ."
     },

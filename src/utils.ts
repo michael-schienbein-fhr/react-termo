@@ -1,11 +1,11 @@
-import { InitOptions } from './types';
+import { InitOptions } from './interfaces';
 import * as packageInfo from '../package.json';
 const Utils = {
     // Function to generate random string for id
     generateId(prefix: string): string {
         return prefix + '-' + Math.random().toString(36).substring(2);
     },
-    containerDraggable(container: HTMLElement, header: HTMLElement, mode: string) {
+    containerDraggable(container: HTMLElement, header: HTMLElement) {
         let isDown = false;
         let startX: number;
         let startY: number;
@@ -41,8 +41,7 @@ const Utils = {
         };
     },
     //given an element, return top,left given it should be at bottom:12, right:12
-    getBottomRightPosition(element: HTMLElement): { top: number; left: number } {
-        const rect = element.getBoundingClientRect();
+    getBottomRightPosition(): { top: number; left: number } {
         return {
             top: window.innerHeight - 490 - 12,
             left: window.innerWidth - 705 - 12,
@@ -65,9 +64,9 @@ const Utils = {
                 {
                     command: 'joke',
                     description: 'Hear a random joke from a random API',
-                    action: (terminal, args) => {
+                    action: (terminal) => {
                         terminal.write('\r\n' + 'Thinking of a joke...');
-                        return new Promise(async (resolve, reject) => {
+                        return new Promise(async (resolve) => {
                             try {
                                 const response = await fetch('https://official-joke-api.appspot.com/random_joke');
                                 const data = await response.json();
@@ -86,9 +85,9 @@ const Utils = {
                 cursorBlink: true,
                 fontSize: 14,
                 theme: {
-                    background: '#1e1e1e', // Dark background
-                    foreground: '#fefefe', // White text
-                    cursor: '#ffffff', // White cursor
+                    background: '#1e1e1e',
+                    foreground: '#fefefe',
+                    cursor: '#ffffff',
                 },
                 fontFamily: 'Courier New, monospace',
                 fontWeight: 'normal',
@@ -96,7 +95,6 @@ const Utils = {
                 allowTransparency: true,
             },
         };
-        // console.log('>>>>>>----  utils:98 ', JSON.parse(JSON.stringify(opts)));
         const mergedOptions = { ...defaultOptions, ...opts };
         return mergedOptions;
     },

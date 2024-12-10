@@ -1,4 +1,4 @@
-import { InitOptions, TerminalManagerReturn } from './types';
+import { InitOptions } from './interfaces';
 import { close, dock, pop } from './svgs';
 import DOM from './dom';
 import Utils from './utils';
@@ -105,7 +105,7 @@ class Termo {
         DOM.appendChild(this.container, terminal);
         this.container.style.transform = 'scale(0)';
         DOM.appendChild(document.body, this.container);
-        Utils.containerDraggable(this.container, header, this.mode);
+        Utils.containerDraggable(this.container, header);
         this.container.style.bottom = '12px';
         this.container.style.right = '12px';
 
@@ -127,6 +127,7 @@ class Termo {
             this.container.style.right = '12px';
             this.container.style.bottom = '12px';
             this.container.setAttribute('mode', 'floating');
+            this.terminalManager?.resize();
         } else {
             throw new Error('Terminal not created');
         }
@@ -145,6 +146,7 @@ class Termo {
             this.container.style.right = '0px';
             this.container.style.bottom = '0px';
             this.container.setAttribute('mode', 'docked');
+            this.terminalManager?.resize();
         } else {
             throw new Error('Terminal not created');
         }

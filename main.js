@@ -30,7 +30,6 @@ $(document).ready(function () {
                     command: 'list',
                     description: 'List all available themes',
                     action: async (terminal, args) => {
-                        console.log('list');
                         let list = ['light', 'dark'];
                         list.forEach((theme) => {
                             terminal.write('\r\n' + theme);

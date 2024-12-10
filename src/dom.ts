@@ -1,5 +1,3 @@
-import Stylesheet from './stylesheet';
-
 const DOM = {
     createDiv(id: string, cls: string): HTMLDivElement {
         const div = document.createElement('div');

@@ -1,4 +1,4 @@
-import { InitOptions } from './types';
+import { InitOptions } from './interfaces';
 const xtermCSS = `
 .xterm {
     cursor: text;
@@ -206,6 +206,9 @@ const Stylesheet = `
 			cursor: pointer;
 		}
 	}
+		[mode="docked"] .termo-header{
+			cursor: pointer;
+		}
 	.darker .termo-header{
 		color: #fefefe;
 	}
@@ -216,6 +219,7 @@ const Stylesheet = `
 		padding: 0px;
 		flex-grow: 1;
 		overflow: auto;
+		background: #1e1e1e;
 	}
 
 	${xtermCSS}

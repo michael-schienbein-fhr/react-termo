@@ -33,38 +33,6 @@ const DOM = {
     },
 };
 
-/******************************************************************************
-Copyright (c) Microsoft Corporation.
-
-Permission to use, copy, modify, and/or distribute this software for any
-purpose with or without fee is hereby granted.
-
-THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
-REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY
-AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
-INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM
-LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
-OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
-PERFORMANCE OF THIS SOFTWARE.
-***************************************************************************** */
-/* global Reflect, Promise, SuppressedError, Symbol, Iterator */
-
-
-function __awaiter(thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-}
-
-typeof SuppressedError === "function" ? SuppressedError : function (error, suppressed, message) {
-    var e = new Error(message);
-    return e.name = "SuppressedError", e.error = error, e.suppressed = suppressed, e;
-};
-
 var version = "0.0.1";
 
 const Utils = {
@@ -72,7 +40,7 @@ const Utils = {
     generateId(prefix) {
         return prefix + '-' + Math.random().toString(36).substring(2);
     },
-    containerDraggable(container, header, mode) {
+    containerDraggable(container, header) {
         let isDown = false;
         let startX;
         let startY;
@@ -106,8 +74,7 @@ const Utils = {
         };
     },
     //given an element, return top,left given it should be at bottom:12, right:12
-    getBottomRightPosition(element) {
-        element.getBoundingClientRect();
+    getBottomRightPosition() {
         return {
             top: window.innerHeight - 490 - 12,
             left: window.innerWidth - 705 - 12,
@@ -130,12 +97,12 @@ const Utils = {
                 {
                     command: 'joke',
                     description: 'Hear a random joke from a random API',
-                    action: (terminal, args) => {
+                    action: (terminal) => {
                         terminal.write('\r\n' + 'Thinking of a joke...');
-                        return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
+                        return new Promise(async (resolve) => {
                             try {
-                                const response = yield fetch('https://official-joke-api.appspot.com/random_joke');
-                                const data = yield response.json();
+                                const response = await fetch('https://official-joke-api.appspot.com/random_joke');
+                                const data = await response.json();
                                 terminal.write('\r\n' + data.setup);
                                 setTimeout(() => {
                                     resolve(terminal.write('\r\n' + data.punchline));
@@ -144,7 +111,7 @@ const Utils = {
                             catch (error) {
                                 terminal.write('\r\nFailed to fetch joke');
                             }
-                        }));
+                        });
                     },
                 },
             ],
@@ -152,9 +119,9 @@ const Utils = {
                 cursorBlink: true,
                 fontSize: 14,
                 theme: {
-                    background: '#1e1e1e', // Dark background
-                    foreground: '#fefefe', // White text
-                    cursor: '#ffffff', // White cursor
+                    background: '#1e1e1e',
+                    foreground: '#fefefe',
+                    cursor: '#ffffff',
                 },
                 fontFamily: 'Courier New, monospace',
                 fontWeight: 'normal',
@@ -162,8 +129,7 @@ const Utils = {
                 allowTransparency: true,
             },
         };
-        // console.log('>>>>>>----  utils:98 ', JSON.parse(JSON.stringify(opts)));
-        const mergedOptions = Object.assign(Object.assign({}, defaultOptions), opts);
+        const mergedOptions = { ...defaultOptions, ...opts };
         return mergedOptions;
     },
     titleID(title) {
@@ -172,17 +138,19 @@ const Utils = {
     },
 };
 
-const soundTerminalOpen = new Audio('https://raw.githubusercontent.com/rajnandan1/termo/main/sounds/terminal_open.mp3');
-soundTerminalOpen.preload = 'auto';
-const soundTerminalClose = new Audio('https://raw.githubusercontent.com/rajnandan1/termo/main/sounds/terminal_close.mp3');
-soundTerminalClose.preload = 'auto';
-const soundRunCommand = new Audio('https://raw.githubusercontent.com/rajnandan1/termo/main/sounds/run_command.mp3');
-soundRunCommand.preload = 'auto';
+let soundTerminalOpen, soundTerminalClose, soundRunCommand;
+soundTerminalOpen = undefined;
+soundTerminalClose = undefined;
+soundRunCommand = undefined;
 var Sounds = {
     terminalOpen: function (opts) {
         let { playSound } = opts;
         if (!playSound) {
             return;
+        }
+        if (soundTerminalOpen === undefined) {
+            soundTerminalOpen = new Audio('https://raw.githubusercontent.com/rajnandan1/termo/main/sounds/terminal_open.mp3');
+            soundTerminalOpen.preload = 'auto';
         }
         soundTerminalOpen.play().catch((error) => console.error('Error playing audio:', error));
     },
@@ -191,12 +159,20 @@ var Sounds = {
         if (!playSound) {
             return;
         }
+        if (soundTerminalClose === undefined) {
+            soundTerminalClose = new Audio('https://raw.githubusercontent.com/rajnandan1/termo/main/sounds/terminal_close.mp3');
+            soundTerminalClose.preload = 'auto';
+        }
         soundTerminalClose.play().catch((error) => console.error('Error playing audio:', error));
     },
     runCommand: function (opts) {
         let { playSound } = opts;
         if (!playSound) {
             return;
+        }
+        if (soundRunCommand === undefined) {
+            soundRunCommand = new Audio('https://raw.githubusercontent.com/rajnandan1/termo/main/sounds/run_command.mp3');
+            soundRunCommand.preload = 'auto';
         }
         soundRunCommand.play().catch((error) => console.error('Error playing audio:', error));
     },
@@ -408,6 +384,9 @@ const Stylesheet = `
 			cursor: pointer;
 		}
 	}
+		[mode="docked"] .termo-header{
+			cursor: pointer;
+		}
 	.darker .termo-header{
 		color: #fefefe;
 	}
@@ -418,6 +397,7 @@ const Stylesheet = `
 		padding: 0px;
 		flex-grow: 1;
 		overflow: auto;
+		background: #1e1e1e;
 	}
 
 	${xtermCSS}
@@ -482,10 +462,7 @@ var addonWebLinksExports = requireAddonWebLinks();
 
 class TerminalManager {
     constructor(div, optsReceived) {
-        this.handleResize = () => {
-            this.fitAddon.fit();
-        };
-        this.opts = Object.assign({}, optsReceived);
+        this.opts = { ...optsReceived };
         this.terminalOptions = this.opts.terminalOptions;
         this.terminal = new xtermExports.Terminal(this.terminalOptions);
         this.fitAddon = new addonFitExports.FitAddon();
@@ -494,27 +471,26 @@ class TerminalManager {
         this.terminal.loadAddon(this.fitAddon);
         this.terminal.loadAddon(this.webLinksAddon);
         this.fitAddon.fit();
-        window.addEventListener('resize', this.handleResize);
         this.userCommands = this.opts.commands;
         //create help command
         this.userCommands.push({
             command: 'help',
             description: 'List all commands',
-            action: (terminal) => __awaiter(this, void 0, void 0, function* () {
+            action: async (terminal) => {
                 terminal.write(`\r\nCommands:\r\n`);
                 this.userCommands.forEach((cmd) => {
                     terminal.write(`  ${cmd.command} - ${cmd.description}\r\n`);
                 });
-            }),
+            },
         });
         // Create clear command
         this.userCommands.push({
             command: 'clear',
             description: 'Clear the terminal screen',
-            action: (terminal) => __awaiter(this, void 0, void 0, function* () {
+            action: async (terminal) => {
                 terminal.write('\x1b[2J'); // Clear screen
                 terminal.write('\x1b[H'); // Move cursor to home position
-            }),
+            },
         });
         this.commandHistory = [];
         this.historyIndex = -1;
@@ -535,7 +511,7 @@ class TerminalManager {
         this.terminal.write('\r\n');
         this.terminal.write('-'.repeat(this.terminal.cols));
         this.terminal.write(`\r\n${prompt}`);
-        this.terminal.onData((data) => __awaiter(this, void 0, void 0, function* () {
+        this.terminal.onData(async (data) => {
             const key = data.charCodeAt(0);
             // Handle Ctrl+C
             if (key === 3) {
@@ -612,12 +588,12 @@ class TerminalManager {
                                 subCmd.action(this.terminal, this.inputBuffer.split(' ').slice(2));
                             }
                             else {
-                                this.terminal.write(`\r\nSubcommand not found: ${this.inputBuffer.split(' ')[1]}. Type 'help' to list all available commands`);
+                                this.terminal.write(`\r\nSubcommand not found: ${this.inputBuffer.split(' ')[1]}. Type 'help' to list all available commands. And this is some text`);
                             }
                         }
                     }
                     else {
-                        yield cmd.action(this.terminal, this.inputBuffer.split(' ').slice(1));
+                        await cmd.action(this.terminal, this.inputBuffer.split(' ').slice(1));
                     }
                 }
                 else {
@@ -638,10 +614,9 @@ class TerminalManager {
             // Add character to buffer and echo
             this.inputBuffer += data;
             this.terminal.write(data);
-        }));
+        });
     }
     destroy() {
-        window.removeEventListener('resize', this.handleResize);
         // Dispose addons
         this.fitAddon.dispose();
         this.webLinksAddon.dispose();
@@ -654,6 +629,11 @@ class TerminalManager {
     }
     focus() {
         this.terminal.focus();
+    }
+    resize() {
+        setTimeout(() => {
+            this.fitAddon.fit();
+        }, 310);
     }
 }
 
@@ -740,7 +720,7 @@ class Termo {
         DOM.appendChild(this.container, terminal);
         this.container.style.transform = 'scale(0)';
         DOM.appendChild(document.body, this.container);
-        Utils.containerDraggable(this.container, header, this.mode);
+        Utils.containerDraggable(this.container, header);
         this.container.style.bottom = '12px';
         this.container.style.right = '12px';
         this.terminalManager = new TerminalManager(terminal, this.options);
@@ -754,12 +734,14 @@ class Termo {
      * @throws {Error} If the container element is not created.
      */
     float() {
+        var _a;
         if (this.container) {
             this.container.style.width = '705px';
             this.container.style.height = '482px';
             this.container.style.right = '12px';
             this.container.style.bottom = '12px';
             this.container.setAttribute('mode', 'floating');
+            (_a = this.terminalManager) === null || _a === void 0 ? void 0 : _a.resize();
         }
         else {
             throw new Error('Terminal not created');
@@ -772,12 +754,14 @@ class Termo {
      * @throws {Error} Throws an error if the terminal container is not created.
      */
     dock() {
+        var _a;
         if (this.container) {
             this.container.style.height = '300px';
             this.container.style.width = '100vw';
             this.container.style.right = '0px';
             this.container.style.bottom = '0px';
             this.container.setAttribute('mode', 'docked');
+            (_a = this.terminalManager) === null || _a === void 0 ? void 0 : _a.resize();
         }
         else {
             throw new Error('Terminal not created');
