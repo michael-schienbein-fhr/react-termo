@@ -7,8 +7,7 @@
     "module": "dist/termo.esm.js",
     "types": "dist/index.d.ts",
     "files": [
-        "dist",
-        "dist/types"
+        "dist"
     ],
     "exports": {
         ".": {
