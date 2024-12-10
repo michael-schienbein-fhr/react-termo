@@ -6,6 +6,22 @@ Termo is a simple terminal emulator that can be used to create a terminal-like i
 
 ---
 
+### Demo
+
+Check out the [demo](https://rajnandan1.github.io/termo/).
+
+### Features
+
+- [x] Customizable terminal title
+- [x] Customizable terminal prompt
+- [x] Customizable terminal theme (light/dark)
+- [x] Customizable terminal font family
+- [x] Customizable terminal welcome message
+- [x] Customizable terminal commands
+- [x] Customizable terminal sound effects
+- [x] Customizable terminal options (xterm.js)
+- [x] Customizable terminal dock/floating mode
+
 ### Installation
 
 - [CDN](#cdn)
@@ -159,36 +175,38 @@ export interface InitOptions {
 	commands?: Command[];
 	terminalOptions?: ITerminalOptions;
 }
+```
 
 ### Command
 
 Command object for defining terminal commands.
 
+```js
 /**
-	* Represents a terminal command with its description, action and optional subcommands
-	* @interface Command
-	*
-	* @property {string} command - The command name/identifier
-	* @property {string} description - Brief description of what the command does
-	* @property {function} action - Async function to execute when command is invoked
-	* @property {Command[]} [subCommands] - Optional array of nested subcommands
-	*
-	* @example
-	* const myCommand: Command = {
-	*   command: 'git',
-	*   description: 'Git version control',
-	*   action: async (terminal, args) => {
-	*     terminal.write('Executing git command...\r\n');
-	*   },
-	*   subCommands: [{
-	*     command: 'status',
-	*     description: 'Show working tree status',
-	*     action: async (terminal) => {
-	*       terminal.write('git status output...\r\n');
-	*     }
-	*   }]
-	* };
-	*/
+* Represents a terminal command with its description, action and optional subcommands
+* @interface Command
+*
+* @property {string} command - The command name/identifier
+* @property {string} description - Brief description of what the command does
+* @property {function} action - Async function to execute when command is invoked
+* @property {Command[]} [subCommands] - Optional array of nested subcommands
+*
+* @example
+* const myCommand: Command = {
+*   command: 'git',
+*   description: 'Git version control',
+*   action: async (terminal, args) => {
+*     terminal.write('Executing git command...\r\n');
+*   },
+*   subCommands: [{
+*     command: 'status',
+*     description: 'Show working tree status',
+*     action: async (terminal) => {
+*       terminal.write('git status output...\r\n');
+*     }
+*   }]
+* };
+*/
 export interface Command {
 	command: string;
 	description: string;
