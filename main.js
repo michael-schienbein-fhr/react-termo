@@ -123,6 +123,7 @@ $(document).ready(function () {
     // if c is pressed, hide the terminal
     $(document).keypress(function (e) {
         if (e.which === 99) {
+            e.preventDefault();
             myDemoTerminal.show();
         }
     });
