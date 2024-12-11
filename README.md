@@ -166,7 +166,6 @@ export interface InitOptions {
 	title?: string;
 	welcomeMessage?: string;
 	theme?: 'light' | 'dark';
-	id?: string;
 	fontFamily?: string;
 	prompt?: string;
 	commands?: Command[];
