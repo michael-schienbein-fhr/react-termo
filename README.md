@@ -135,7 +135,7 @@ myDemoTerminal.show();
 
 Termo accepts an object with the following options.
 
-```
+```js
 /**
 	* Configuration options for initializing the terminal
 	* @interface InitOptions
