@@ -12,15 +12,12 @@ Check out the [demo and documentation](https://rajnandan1.github.io/termo/).
 
 ### Features
 
-- [x] Customizable terminal title
-- [x] Customizable terminal prompt
-- [x] Customizable terminal theme (light/dark)
-- [x] Customizable terminal font family
-- [x] Customizable terminal welcome message
-- [x] Customizable terminal commands
-- [x] Customizable terminal sound effects
-- [x] Customizable terminal options (xterm.js)
-- [x] Customizable terminal dock/floating mode
+- [x] Customizable terminal title, prompt, font, and theme
+- [x] Set a welcome message for the terminal
+- [x] Add and execute any javascript as commands
+- [x] Control sound effects
+- [x] Get full access to the terminal (xterm.js)
+- [x] Set terminal to dock/floating mode
 
 ### Installation
 
@@ -30,7 +27,7 @@ Check out the [demo and documentation](https://rajnandan1.github.io/termo/).
 Include the following script tag in your HTML file.
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/termo/dist/termo.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/rajnandan1/termo/dist/termo.min.js"></script>
 ```
 
 Install the package using npm.
