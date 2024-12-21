@@ -21,7 +21,11 @@
         "build:types": "tsc --emitDeclarationOnly",
         "build": "npm run clean && npm run build:types && rollup --bundleConfigAsCjs -c rollup.config.js",
         "watch": "rollup --bundleConfigAsCjs -c rollup.config.js --watch",
-        "prettify": "prettier --write ."
+        "prettify": "prettier --write .",
+        "test": "vitest",
+        "test:coverage": "vitest run --coverage",
+        "prepublishOnly": "npm run build",
+        "dev": "vite"
     },
     "keywords": [
         "termo"
@@ -33,15 +37,31 @@
         "@rollup/plugin-json": "^6.1.0",
         "@rollup/plugin-node-resolve": "^15.3.0",
         "@rollup/plugin-terser": "^0.4.4",
+        "@testing-library/react": "^14.1.2",
+        "@testing-library/user-event": "^14.5.1",
+        "@types/react": "^19.0.2",
+        "@types/react-dom": "^19.0.2",
         "@types/xterm": "^2.0.3",
+        "@vitejs/plugin-react": "^4.2.1",
         "@xterm/addon-fit": "^0.10.0",
         "@xterm/addon-web-links": "^0.11.0",
         "@xterm/xterm": "^5.5.0",
+        "jsdom": "^23.0.1",
         "prettier": "^3.2.5",
         "rollup": "^4.18.0",
         "rollup-plugin-postcss": "^4.0.2",
         "rollup-plugin-typescript2": "^0.36.0",
         "tslib": "^2.6.2",
-        "typescript": "^5.4.5"
+        "typescript": "^5.4.5",
+        "vite": "^5.0.10",
+        "vitest": "^1.0.4"
+    },
+    "dependencies": {
+        "react": "^19.0.0",
+        "react-dom": "^19.0.0"
+    },
+    "peerDependencies": {
+        "react": ">=16.8.0",
+        "react-dom": ">=16.8.0"
     }
 }

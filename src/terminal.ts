@@ -150,14 +150,16 @@ class TerminalManager {
                         } else {
                             let subCmd = cmd.subCommands.find((c) => c.command === this.inputBuffer.split(' ')[1]);
                             if (subCmd) {
-                                subCmd.action(this.terminal, this.inputBuffer.split(' ').slice(2));
+                                this.terminal.write('\r\n');
+                                await subCmd.action(this.terminal, this.inputBuffer.split(' ').slice(2));
                             } else {
                                 this.terminal.write(
-                                    `\r\nSubcommand not found: ${this.inputBuffer.split(' ')[1]}. Type 'help' to list all available commands. And this is some text`,
+                                    `\r\nSubcommand not found: ${this.inputBuffer.split(' ')[1]}. Type 'help' to list all available commands.`,
                                 );
                             }
                         }
                     } else {
+                        this.terminal.write('\r\n');
                         await cmd.action(this.terminal, this.inputBuffer.split(' ').slice(1));
                     }
                 } else {

@@ -1,4 +1,5 @@
 import { ITerminalOptions, Terminal } from '@xterm/xterm';
+export { Terminal };
 
 /**
  * Options for initializing the terminal.
@@ -56,6 +57,8 @@ export interface Command {
     action: (terminal: Terminal, args: string[]) => Promise<void>;
     subCommands?: Command[];
 }
+
+export type TerminalRef = Terminal | undefined;
 
 export interface TerminalManagerReturn {
     terminal: Terminal;

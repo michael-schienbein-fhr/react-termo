@@ -1,4 +1,4 @@
-import { InitOptions } from './interfaces';
+import { InitOptions, Terminal } from './interfaces';
 import { close, dock, pop } from './svgs';
 import DOM from './dom';
 import Utils from './utils';
@@ -20,6 +20,7 @@ class Termo {
     state: 'minimized' | 'open' | 'destroyed' | 'initiated';
     container: HTMLDivElement | undefined;
     terminalManager: TerminalManager | undefined;
+    terminal: Terminal;
 
     //define constructor arguments
 
@@ -32,6 +33,7 @@ class Termo {
         this.mode = 'floating';
         this.state = 'initiated';
         this.container = undefined;
+        this.terminal = new Terminal(this.options.terminalOptions);
     }
 
     /**
@@ -110,6 +112,7 @@ class Termo {
         this.container.style.right = '12px';
 
         this.terminalManager = new TerminalManager(terminal, this.options);
+        this.terminal = this.terminalManager.terminal;
         this.state = 'minimized';
     }
 
@@ -235,3 +238,8 @@ class Termo {
 }
 
 export default Termo;
+
+export interface TerminalManagerReturn {
+    terminal: Terminal;
+    destroy: () => void;
+}
