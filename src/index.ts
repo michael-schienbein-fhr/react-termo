@@ -1,4 +1,4 @@
-import { InitOptions, Terminal } from './interfaces';
+import { InitOptions, Terminal, TerminalTheme } from './interfaces';
 import { close, dock, pop } from './svgs';
 import DOM from './dom';
 import Utils from './utils';
@@ -62,7 +62,7 @@ class Termo {
 
         let headerID = Utils.generateId('termo-header');
         let header = DOM.createDiv(headerID, 'termo-header');
-        if (this.options.theme === 'dark') {
+        if (this.options.theme) {
             this.container.classList.add('darker');
         }
 
@@ -192,19 +192,17 @@ class Termo {
     /**
      * Sets the theme of the terminal.
      *
-     * @param theme - The theme to set, either 'dark' or 'light'.
+     * @param theme - A theme object conforming to TerminalTheme interface
      * @throws Will throw an error if the terminal container is not created.
      */
-    setTheme(theme: 'dark' | 'light') {
-        if (this.container) {
-            if (theme === 'dark') {
-                this.container.classList.add('darker');
-            } else {
-                this.container.classList.remove('darker');
-            }
-        } else {
+    setTheme(theme: TerminalTheme) {
+        if (!this.container) {
             throw new Error('Terminal not created');
         }
+
+        this.container.classList.add('darker');
+        this.terminal.options.theme = theme;
+        this.options.theme = theme;
     }
 
     /**

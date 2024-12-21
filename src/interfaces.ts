@@ -1,5 +1,51 @@
-import { ITerminalOptions, Terminal } from '@xterm/xterm';
+import { ITerminalOptions, Terminal, ITheme } from '@xterm/xterm';
 export { Terminal };
+
+/**
+ * Theme configuration for the terminal
+ */
+export interface TerminalTheme extends ITheme {
+    /** The default foreground color */
+    foreground: string;
+    /** The default background color */
+    background: string;
+    /** The cursor color */
+    cursor: string;
+    /** The selection background color */
+    selectionBackground: string;
+    /** ANSI black */
+    black: string;
+    /** ANSI bright black */
+    brightBlack: string;
+    /** ANSI red */
+    red: string;
+    /** ANSI bright red */
+    brightRed: string;
+    /** ANSI green */
+    green: string;
+    /** ANSI bright green */
+    brightGreen: string;
+    /** ANSI yellow */
+    yellow: string;
+    /** ANSI bright yellow */
+    brightYellow: string;
+    /** ANSI blue */
+    blue: string;
+    /** ANSI bright blue */
+    brightBlue: string;
+    /** ANSI magenta */
+    magenta: string;
+    /** ANSI bright magenta */
+    brightMagenta: string;
+    /** ANSI cyan */
+    cyan: string;
+    /** ANSI bright cyan */
+    brightCyan: string;
+    /** ANSI white */
+    white: string;
+    /** ANSI bright white */
+    brightWhite: string;
+}
 
 /**
  * Options for initializing the terminal.
@@ -23,7 +69,7 @@ export interface InitOptions {
     /**
      * The theme of the terminal.
      */
-    theme: string;
+    theme: TerminalTheme;
 
     /**
      * Whether to play a sound on certain actions.

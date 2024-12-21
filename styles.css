@@ -99,3 +99,35 @@
     background-color: #292c33;
     box-shadow: none;
 }
+
+.terminal-container {
+    height: 100% !important;
+    width: 100% !important;
+    position: absolute !important;
+    inset: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+}
+
+.terminal-container .xterm {
+    height: 100% !important;
+    width: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+}
+
+.terminal-container .xterm-viewport {
+    flex: 1 !important;
+}
+
+.terminal-container .xterm-screen {
+    width: 100% !important;
+    height: 100% !important;
+}
+
+.xterm {
+    padding: 20px;
+}
+
+.xterm-viewport {
+}

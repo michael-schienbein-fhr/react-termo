@@ -1,5 +1,7 @@
 import { InitOptions } from './interfaces';
+import { themes } from './themes';
 import * as packageInfo from '../package.json';
+
 const Utils = {
     // Function to generate random string for id
     generateId(prefix: string): string {
@@ -52,57 +54,97 @@ const Utils = {
         audio.play();
     },
     getInitOptions(opts: InitOptions): InitOptions {
-        const defaultOptions: InitOptions = {
-            playSound: true,
-            title: 'termo',
-            welcomeMessage: `Welcome to termo v${packageInfo.version}!`,
-            theme: 'light',
-            id: 'termo',
-            fontFamily: 'Courier New, monospace',
-            prompt: '$',
+        return {
+            title: opts.title,
+            id: opts.id,
+            prompt: opts.prompt || '$',
             commands: [
                 {
-                    command: 'joke',
-                    description: 'Hear a random joke from a random API',
-                    action: (terminal) => {
-                        terminal.write('\r\n' + 'Thinking of a joke...');
-                        return new Promise(async (resolve) => {
-                            try {
-                                const response = await fetch('https://official-joke-api.appspot.com/random_joke');
-                                const data = await response.json();
-                                terminal.write('\r\n' + data.setup);
-                                setTimeout(() => {
-                                    resolve(terminal.write('\r\n' + data.punchline));
-                                }, 2000);
-                            } catch (error) {
-                                terminal.write('\r\nFailed to fetch joke');
-                            }
-                        });
+                    command: 'theme',
+                    description: 'List or set terminal theme',
+                    action: async (terminal) => {
+                        terminal.write('\r\nUsage:\r\n');
+                        terminal.write('  theme list - List available themes\r\n');
+                        terminal.write('  theme set <theme-name> - Set terminal theme\r\n');
                     },
+                    subCommands: [
+                        {
+                            command: 'list',
+                            description: 'List available themes',
+                            action: async (terminal) => {
+                                terminal.write('\r\nAvailable themes:\r\n');
+                                Object.keys(themes).forEach((themeName) => {
+                                    terminal.write(`  ${themeName}\r\n`);
+                                });
+                            }
+                        },
+                        {
+                            command: 'set',
+                            description: 'Set terminal theme',
+                            action: async (terminal, args) => {
+                                if (!args || args.length === 0) {
+                                    terminal.write('\r\nUsage: theme set <theme-name>');
+                                    terminal.write('\r\nUse "theme list" to see available themes');
+                                    return;
+                                }
+                                const themeName = args[0];
+                                const theme = themes[themeName];
+                                if (!theme) {
+                                    terminal.write(`\r\nTheme "${themeName}" not found`);
+                                    terminal.write('\r\nUse "theme list" to see available themes');
+                                    return;
+                                }
+                                terminal.options.theme = theme;
+                                // Force a terminal refresh to apply the theme
+                                terminal.clearTextureAtlas();
+                                terminal.refresh(0, terminal.rows - 1);
+                                terminal.write(`\r\nTheme set to "${themeName}"\r\n`);
+                            }
+                        }
+                    ]
                 },
+                ...(opts.commands || [])
             ],
+            welcomeMessage: opts.welcomeMessage || `Welcome to Termo v${packageInfo.version}`,
+            fontFamily: opts.fontFamily || 'monospace',
+            playSound: opts.playSound ?? true,
+            theme: opts.theme || themes.dark,
             terminalOptions: {
                 cursorBlink: true,
                 fontSize: 14,
-                theme: {
-                    background: '#1e1e1e',
-                    foreground: '#fefefe',
-                    cursor: '#ffffff',
-                },
-                fontFamily: 'Courier New, monospace',
-                fontWeight: 'normal',
-                lineHeight: 1.2,
-                allowTransparency: true,
-            },
+                fontFamily: opts.fontFamily || 'monospace',
+                theme: opts.theme || themes.dark,
+                ...opts.terminalOptions
+            }
         };
-        const mergedOptions = { ...defaultOptions, ...opts };
-        return mergedOptions;
     },
 
     titleID(title: string): string {
         //md5 hash the title
         return btoa(title).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
     },
+
+    /**
+     * Determines if a color is dark by calculating its relative luminance
+     * @param color - Hex color string (e.g., '#000000')
+     * @returns boolean - true if the color is dark, false if light
+     */
+    isColorDark(color: string): boolean {
+        // Remove the hash if it exists
+        const hex = color.replace('#', '');
+        
+        // Convert hex to RGB
+        const r = parseInt(hex.substr(0, 2), 16);
+        const g = parseInt(hex.substr(2, 2), 16);
+        const b = parseInt(hex.substr(4, 2), 16);
+        
+        // Calculate relative luminance using the sRGB color space
+        // See: https://www.w3.org/TR/WCAG20/#relativeluminancedef
+        const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+        
+        // Return true if the color is dark (luminance < 0.5)
+        return luminance < 0.5;
+    }
 };
 
 export default Utils;

@@ -165,7 +165,7 @@ const Stylesheet = `
 		position: fixed;
 		bottom: 12px;
 		right: 12px;
-		border: 1px solid #011627;
+		border: 1px solid rgba(1, 22, 39, 0.8);
 		width: 705px;
 		max-width: 100vw;
 		height: 482px;
@@ -175,11 +175,10 @@ const Stylesheet = `
 		flex-direction: column;
 		z-index: 2147483647;
 		transition: transform 0.3s ease, width 0.3s ease, height 0.3s ease;
-		background: rgba(255, 255, 255, 0.2);
+		background: transparent;
 		box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
 		backdrop-filter: blur(5px);
 		-webkit-backdrop-filter: blur(5px);
-		
 	}
 	.termo-container *{
 		font-family: {{fontFamily}};
@@ -197,31 +196,49 @@ const Stylesheet = `
 		font-family: monospace;
 		text-transform: uppercase;
 		user-select: none;
-		color: #011627;
-
-		.termo-close-button{
-			cursor: pointer;
-		}
-		.termo-resize-button{
-			cursor: pointer;
-		}
+		color: rgba(1, 22, 39, 0.8);
+		background: transparent;
 	}
-		[mode="docked"] .termo-header{
-			cursor: pointer;
-		}
+	.termo-header .termo-close-button{
+		cursor: pointer;
+	}
+	.termo-header .termo-resize-button{
+		cursor: pointer;
+	}
+	
+	[mode="docked"] .termo-header{
+		cursor: pointer;
+	}
+	
 	.darker .termo-header{
-		color: #fefefe;
+		color: rgba(254, 254, 254, 0.8);
 	}
+	
 	.termo-container .termo-terminal{
 		background-color: transparent;
-		border: 1px solid transparent;
+		border: 1px solid rgba(1, 22, 39, 0.4);
 		border-radius: 4px;
 		padding: 0px;
 		flex-grow: 1;
 		overflow: auto;
-		background: #1e1e1e;
+	}
+	
+	.darker #termo-{{titleID}}-container {
+		border-color: rgba(254, 254, 254, 0.8);
 	}
 
+	.darker .termo-header {
+		color: rgba(254, 254, 254, 0.8);
+	}
+
+	.darker .termo-container .termo-terminal {
+		border-color: rgba(254, 254, 254, 0.4);
+	}
+
+	.xterm .xterm-viewport {
+		background-color: transparent !important;
+	}
+	
 	${xtermCSS}
 
 

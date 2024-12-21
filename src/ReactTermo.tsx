@@ -1,9 +1,10 @@
 import React, { useEffect, useRef, useImperativeHandle, forwardRef, Ref, useState } from 'react';
-import { InitOptions, TerminalManagerReturn, TerminalRef, Command } from './interfaces';
+import { InitOptions, TerminalRef, Command, TerminalTheme } from './interfaces';
 import Termo from './index';
+import { darkTheme } from './themes';
 
 export interface ReactTermoProps extends Partial<InitOptions> {
-  theme?: 'light' | 'dark';
+  theme?: TerminalTheme;
   title?: string;
   fontFamily?: string;
   playSound?: boolean;
@@ -16,7 +17,7 @@ export interface ReactTermoProps extends Partial<InitOptions> {
 
 export interface ReactTermoRef {
   terminal: TerminalRef;
-  setTheme: (theme: 'light' | 'dark') => void;
+  setTheme: (theme: TerminalTheme) => void;
   create: () => void;
   show: () => void;
   hide: () => void;
@@ -29,11 +30,10 @@ const ReactTermo = forwardRef<ReactTermoRef, ReactTermoProps>(({
   playSound = true,
   title = 'termo',
   welcomeMessage = 'Welcome to react-termo!',
-  theme = 'dark',
+  theme,
   fontFamily = 'monospace',
   prompt = '$ ',
   commands = [],
-  terminalOptions = {},
   className = '',
   onReady
 }, ref: Ref<ReactTermoRef>) => {
@@ -50,10 +50,13 @@ const ReactTermo = forwardRef<ReactTermoRef, ReactTermoProps>(({
   const [isInitialized, setIsInitialized] = useState(false);
   const terminalRef = useRef<Termo | null>(null);
 
-  const setTheme = (newTheme: 'light' | 'dark') => {
+  const setTheme = (newTheme: TerminalTheme) => {
     console.log('[ReactTermo] Setting theme:', newTheme);
     if (terminalRef.current && isInitialized) {
-      terminalRef.current.setTheme(newTheme);
+      terminalRef.current.terminal.options.theme = newTheme;
+      // Force a terminal refresh to apply the theme
+      terminalRef.current.terminal.clearTextureAtlas();
+      terminalRef.current.terminal.refresh(0, terminalRef.current.terminal.rows - 1);
     } else {
       console.warn('[ReactTermo] Cannot set theme - terminal not initialized');
     }
@@ -146,7 +149,7 @@ const ReactTermo = forwardRef<ReactTermoRef, ReactTermoProps>(({
     try {
       const terminal = new Termo({
         title: title || 'Terminal',
-        theme: theme as 'light' | 'dark',
+        theme: theme || darkTheme,
         fontFamily: fontFamily || 'monospace',
         playSound: playSound ?? true,
         commands: commands || [],
@@ -157,12 +160,7 @@ const ReactTermo = forwardRef<ReactTermoRef, ReactTermoProps>(({
           cursorBlink: true,
           fontSize: 14,
           fontFamily: fontFamily || 'monospace',
-          theme: {
-            background: theme === 'dark' ? '#1e1e1e' : '#ffffff',
-            foreground: theme === 'dark' ? '#ffffff' : '#000000',
-            cursor: theme === 'dark' ? '#ffffff' : '#000000',
-            selectionBackground: theme === 'dark' ? '#ffffff44' : '#00000044',
-          }
+          theme: theme || darkTheme,
         },
       });
 
@@ -195,8 +193,11 @@ const ReactTermo = forwardRef<ReactTermoRef, ReactTermoProps>(({
         onReady(terminal);
       }
 
-      // Set theme and ensure visibility
-      terminal.setTheme(theme as 'light' | 'dark');
+      // Set theme colors and ensure visibility
+      if (theme) {
+        terminal.terminal.options.theme = theme;
+      }
+      terminal.setTheme(darkTheme);  
       terminal.show();
       
       // Force a resize after a short delay to ensure proper sizing
@@ -217,7 +218,7 @@ const ReactTermo = forwardRef<ReactTermoRef, ReactTermoProps>(({
   useEffect(() => {
     console.log('[ReactTermo] Theme changed to:', theme);
     if (terminalRef.current && isInitialized && theme) {
-      setTheme(theme as 'light' | 'dark');
+      setTheme(theme);
     }
   }, [theme, isInitialized]);
 
@@ -230,7 +231,6 @@ const ReactTermo = forwardRef<ReactTermoRef, ReactTermoProps>(({
         height: '100%',
         position: 'relative',
         overflow: 'hidden',
-        background: theme === 'dark' ? '#1e1e1e' : '#ffffff',
         display: 'flex',
         flexDirection: 'column'
       }}
