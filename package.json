@@ -1,13 +1,17 @@
 {
     "name": "@rajnandan1/termo",
     "version": "0.0.1",
-    "description": "A terminal emulator for the web",
+    "description": "A modern, customizable terminal emulator component for React applications",
     "type": "module",
     "main": "dist/termo.min.js",
     "module": "dist/termo.esm.js",
     "types": "dist/index.d.ts",
     "files": [
-        "dist"
+        "dist",
+        "src",
+        "LICENSE",
+        "README.md",
+        "package.json"
     ],
     "exports": {
         ".": {
@@ -20,48 +24,57 @@
         "clean": "rm -rf dist",
         "build:types": "tsc --emitDeclarationOnly",
         "build": "npm run clean && npm run build:types && rollup --bundleConfigAsCjs -c rollup.config.js",
-        "watch": "rollup --bundleConfigAsCjs -c rollup.config.js --watch",
         "prettify": "prettier --write .",
         "test": "vitest",
-        "test:coverage": "vitest run --coverage",
         "prepublishOnly": "npm run build",
         "dev": "vite"
     },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/rajnandan1/react-termo.git"
+    },
+    "bugs": {
+        "url": "https://github.com/rajnandan1/react-termo/issues"
+    },
+    "homepage": "https://github.com/rajnandan1/react-termo#readme",
     "keywords": [
-        "termo"
+        "termo",
+        "terminal",
+        "react",
+        "xterm",
+        "emulator",
+        "console",
+        "shell",
+        "command-line",
+        "cli",
+        "terminal-emulator"
     ],
-    "author": "Raj Nandan Sharma <rajnandan1@gmail.com> (https://www.rajnandan.com)",
+    "author": "Michael Schienbein <m@schienbein.dev> (https://www.schienbein.dev)",
     "license": "MIT",
     "devDependencies": {
         "@rollup/plugin-commonjs": "^28.0.1",
         "@rollup/plugin-json": "^6.1.0",
         "@rollup/plugin-node-resolve": "^15.3.0",
         "@rollup/plugin-terser": "^0.4.4",
-        "@testing-library/react": "^14.1.2",
-        "@testing-library/user-event": "^14.5.1",
         "@types/react": "^19.0.2",
         "@types/react-dom": "^19.0.2",
         "@types/xterm": "^2.0.3",
         "@vitejs/plugin-react": "^4.2.1",
-        "@xterm/addon-fit": "^0.10.0",
-        "@xterm/addon-web-links": "^0.11.0",
-        "@xterm/xterm": "^5.5.0",
-        "jsdom": "^23.0.1",
         "prettier": "^3.2.5",
+        "react": "^19.0.0",
+        "react-dom": "^19.0.0",
         "rollup": "^4.18.0",
         "rollup-plugin-postcss": "^4.0.2",
         "rollup-plugin-typescript2": "^0.36.0",
         "tslib": "^2.6.2",
         "typescript": "^5.4.5",
-        "vite": "^5.0.10",
-        "vitest": "^1.0.4"
-    },
-    "dependencies": {
-        "react": "^19.0.0",
-        "react-dom": "^19.0.0"
+        "vite": "^5.0.10"
     },
     "peerDependencies": {
         "react": ">=16.8.0",
-        "react-dom": ">=16.8.0"
+        "react-dom": ">=16.8.0",
+        "@xterm/xterm": ">=5.0.0",
+        "@xterm/addon-fit": ">=0.8.0",
+        "@xterm/addon-web-links": ">=0.9.0"
     }
 }
